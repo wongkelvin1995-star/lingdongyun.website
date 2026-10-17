@@ -8,8 +8,8 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((
   <div class="container">
     <div class="section-head">
       <p class="eyebrow">使用教程</p>
-      <h2 id="guides-title">灵动云使用教程与入门文章</h2>
-      <p>从套餐选择、订阅导入到故障排查，{guides.length} 篇原创教程覆盖常见使用问题。</p>
+      <h2 id="guides-title">灵动云机场使用教程：从选套餐到连上节点</h2>
+      <p>{guides.length} 篇原创教程：灵动云套餐怎么选、Clash 与小火箭订阅导入、Windows 与 Android 客户端设置、BGP 与 SS 协议科普，以及节点超时和订阅更新失败的排查方法。</p>
     </div>
     <div class="guide-grid">
       {guides.map((g) => (

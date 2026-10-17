@@ -9,8 +9,14 @@ import Guides from '../components/home/Guides.astro';
 import Reviews from '../components/home/Reviews.astro';
 import Scenarios from '../components/home/Scenarios.astro';
 import Faq from '../components/home/Faq.astro';
+import BuyingGuide from '../components/home/BuyingGuide.astro';
 import { SITE, abs, BRAND_ALIASES, BRAND_KEYWORDS } from '../config/site';
 import { FAQS, stripHtml } from '../data/faq';
+import { PLANS, getPlan } from '../data/plans';
+
+const minMonthly = Math.min(...PLANS.filter((p) => p.paymentCycle === 'month').map((p) => p.priceAmount));
+const yearPlan = getPlan('chuanyun');
+const description = `灵动云（Lingdongyun，又称灵动云机场、灵动云VPN）官网：月付 ¥${minMonthly} 起、年付 ${yearPlan.displayPrice}${yearPlan.displayPriceSuffix}、不限时流量包共 ${PLANS.length} 档套餐，支持 Clash、小火箭、v2rayN 订阅导入，附科学上网教程与官方注册入口。`;
 
 const jsonLd = [
   {
@@ -21,7 +27,7 @@ const jsonLd = [
     alternateName: [SITE.brand, ...BRAND_ALIASES],
     url: abs('/'),
     inLanguage: SITE.lang,
-    description: SITE.defaultDescription,
+    description,
     publisher: { '@id': abs('/#organization') },
   },
   {
@@ -47,7 +53,7 @@ const jsonLd = [
   },
 ];
 ---
-<BaseLayout jsonLd={jsonLd} keywords={BRAND_KEYWORDS}>
+<BaseLayout description={description} jsonLd={jsonLd} keywords={BRAND_KEYWORDS}>
   <Hero />
   <BrandFacts />
   <Services />
@@ -56,5 +62,6 @@ const jsonLd = [
   <Guides />
   <Reviews />
   <Scenarios />
+  <BuyingGuide />
   <Faq />
 </BaseLayout>

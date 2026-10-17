@@ -1,0 +1,113 @@
+---
+/**
+ * 「灵动云机场选购指南」长文区块：首页主要的可索引正文。
+ * 覆盖品牌词与辅助主题（机场推荐、便宜机场、稳定机场、科学上网、梯子、
+ * Clash / 小火箭 / v2rayN 机场、月付 / 年付 / 不限时流量包等），价格读取 plans.ts。
+ */
+import { PLANS, getPlan, priceText, trafficText } from '../../data/plans';
+import ActionLink from '../ActionLink.astro';
+
+const fufeng = getPlan('fufeng');
+const yulang = getPlan('yulang');
+const poxiao = getPlan('poxiao');
+const lingxiao = getPlan('lingxiao');
+const chuanyun = getPlan('chuanyun');
+const xianyun = getPlan('xianyun');
+const feiyun = getPlan('feiyun');
+const yearMonthly = (chuanyun.priceAmount / (chuanyun.paymentMonths ?? 12)).toFixed(2);
+---
+<section class="section" id="buying-guide" aria-labelledby="bg-title">
+  <div class="container bg-wrap">
+    <div class="section-head">
+      <p class="eyebrow">选购指南</p>
+      <h2 id="bg-title">灵动云机场选购指南：便宜、稳定的科学上网方案怎么选</h2>
+      <p>想找一个价格透明、上手简单的机场？下面从价格、线路、客户端和使用场景四个方面，完整介绍灵动云。</p>
+    </div>
+
+    <div class="bg-grid">
+      <article class="bg-block">
+        <h3>灵动云机场是什么</h3>
+        <p>
+          “机场”是中文网络里对代理订阅服务的俗称，也有人叫它梯子、VPN 或加速器。灵动云（Lingdongyun）就是这样一个机场品牌：你在灵动云官网注册并购买套餐后，会得到一条专属订阅链接，把它导入 Clash、小火箭等客户端，就能获取节点并开始科学上网。灵动云VPN、灵动云梯子、灵动云加速器指的都是同一个服务。
+        </p>
+      </article>
+
+      <article class="bg-block">
+        <h3>便宜机场怎么选：先看付费方式</h3>
+        <p>
+          选便宜机场，别只看单价，还要看付款周期和流量周期。灵动云月付入门档{fufeng.name}为{priceText(fufeng)}、{trafficText(fufeng)}；年付档{chuanyun.name}为{priceText(chuanyun)}，{trafficText(chuanyun)}，折合约 ¥{yearMonthly}/月，是长期轻量使用的高性价比选择；不想按月续费的话，不限时流量包{xianyun.name}为{priceText(xianyun)}、{trafficText(xianyun)}，用多少算多少。
+        </p>
+      </article>
+
+      <article class="bg-block">
+        <h3>稳定机场看什么：线路与协议</h3>
+        <p>
+          机场稳不稳定，主要取决于线路、协议和节点负载。灵动云采用 BGP 接入，不同运营商的用户都能获得较均衡的路由；传输使用 Shadowsocks（SS）协议，加密轻量、客户端兼容性好。实际体验还和所在地区、网络时段有关，建议在晚高峰等常用时段亲自测试几次节点延迟。
+        </p>
+      </article>
+
+      <article class="bg-block">
+        <h3>Clash、小火箭、v2rayN 机场都能用</h3>
+        <p>
+          灵动云订阅适用于常见的 Clash 系客户端（如 Clash Verge、Clash Party）、iOS 上的小火箭 Shadowrocket，以及 Windows 的 v2rayN 和 Android 的 v2rayNG。导入时只要选择与客户端对应的订阅链接，更新后即可在节点列表中测速、选择并连接，配合规则模式还能让国内网站直连、节省流量。
+        </p>
+      </article>
+
+      <article class="bg-block">
+        <h3>学生党、上班族、重度用户分别怎么选</h3>
+        <p>
+          学生党机场首选低价：{fufeng.name}或年付{chuanyun.name}足够日常查资料和通讯。上班族日常浏览加看视频，{yulang.name}的 {yulang.displayTraffic} 更从容。重度视频、多设备或家庭共用，可以选大流量机场档位{poxiao.name}（{poxiao.displayTraffic}）或{lingxiao.name}（{lingxiao.displayTraffic}）。偶尔出差、用量不规律，则选不限时流量包，最高档{feiyun.name}提供 {feiyun.displayTraffic} 总流量。
+        </p>
+      </article>
+
+      <article class="bg-block">
+        <h3>三步开始使用灵动云</h3>
+        <p>
+          第一步，在灵动云官网通过官方入口注册账号；第二步，在用户中心从 {PLANS.length} 档套餐中选择并付款；第三步，复制订阅链接导入客户端，选择节点后即可连接。遇到订阅更新失败或节点超时，可以按官网的排查教程逐项检查。
+        </p>
+      </article>
+    </div>
+
+    <div class="bg-cta">
+      <ActionLink>立即注册灵动云</ActionLink>
+      <a class="btn btn--ghost" href="#plans">对比 {PLANS.length} 档套餐</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 40px;
+  }
+  .bg-block {
+    min-width: 0;
+    padding-top: 18px;
+    border-top: 2px solid var(--line);
+  }
+  .bg-block h3 {
+    font-size: 19px;
+    margin-bottom: 10px;
+    text-wrap: balance;
+  }
+  .bg-block p {
+    color: var(--text);
+    line-height: 1.85;
+  }
+  .bg-cta {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  @media (max-width: 767px) {
+    .bg-grid {
+      grid-template-columns: 1fr;
+    }
+    .bg-cta :global(.btn) {
+      flex: 1 1 200px;
+    }
+  }
+</style>

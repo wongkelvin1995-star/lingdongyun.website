@@ -95,7 +95,9 @@ ok(home.includes('折合约 ¥8.25/月，实际需一次支付 ¥99/年'), '穿�
 for (const id of ['plans', 'clients', 'guides', 'faq']) ok(home.includes(`id="${id}"`), `首页锚点 #${id}`);
 ok(home.includes('前往官网获取客户端'), '客户端按钮文案为“前往官网获取客户端”');
 ok(!/id="reviews"/.test(home), '无真实评价时评价列表隐藏');
-ok((home.match(/<details class="faq-item/g) || []).length >= 10, 'FAQ ≥ 10 题');
+ok((home.match(/<li class="faq-item"/g) || []).length === 10, 'FAQ 恰好 10 题');
+ok([...home.matchAll(/<li class="faq-item"[^>]*>([\s\S]*?)<\/li>\s*(?=<li class="faq-item"|<\/ol>)/g)].every((m) => /<div class="faq-a"[^>]*>\s*<p[^>]*>[^<]{20,}/.test(m[1])), 'FAQ 每题都有可见答案');
+ok(!/<details[^>]*faq/.test(home), 'FAQ 答案不折叠');
 
 // 6. robots / sitemap
 const robots = readFileSync(join(DIST, 'robots.txt'), 'utf8');

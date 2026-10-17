@@ -6,19 +6,19 @@ import ActionLink from '../ActionLink.astro';
   <div class="container faq-wrap">
     <div class="section-head">
       <p class="eyebrow">常见问题</p>
-      <h2 id="faq-title">灵动云常见问题</h2>
-      <p>关于套餐、订阅导入与客户端使用的常见疑问。</p>
+      <h2 id="faq-title">灵动云常见问题（FAQ）</h2>
+      <p>关于灵动云机场的价格、套餐区别、客户端、订阅导入、线路与试用，新用户最常问的 10 个问题。</p>
     </div>
-    <div class="faq-list">
+    <ol class="faq-list">
       {FAQS.map((f, i) => (
-        <details class="faq-item" open={i === 0}>
-          <summary><h3>{f.q}</h3></summary>
+        <li class="faq-item" id={`faq-${i + 1}`}>
+          <h3 class="faq-q"><span class="faq-n" aria-hidden="true">Q{i + 1}</span>{f.q}</h3>
           <div class="faq-a">
             {f.a.map((p) => <p set:html={p} />)}
           </div>
-        </details>
+        </li>
       ))}
-    </div>
+    </ol>
     <div class="faq-cta">
       <p>准备好了？注册后即可在用户中心选择套餐。</p>
       <ActionLink>注册并订购</ActionLink>
@@ -31,55 +31,42 @@ import ActionLink from '../ActionLink.astro';
     max-width: 880px;
   }
   .faq-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    gap: 12px;
+    gap: 14px;
   }
   .faq-item {
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 14px;
-    transition: border-color 0.2s ease;
+    padding: 20px 22px;
   }
-  .faq-item[open] {
-    border-color: #cfc3f8;
-    background: linear-gradient(180deg, #fbf9ff, #fff 50%);
-  }
-  summary {
-    list-style: none;
-    cursor: pointer;
+  .faq-q {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 20px;
-    min-height: 56px;
-    border-radius: 14px;
+    gap: 12px;
+    align-items: baseline;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-wrap: balance;
   }
-  summary::-webkit-details-marker {
-    display: none;
-  }
-  summary h3 {
-    font-size: 16.5px;
-    font-weight: 600;
-  }
-  summary::after {
-    content: '';
+  .faq-n {
     flex: none;
-    width: 10px;
-    height: 10px;
-    border-right: 2px solid var(--brand);
-    border-bottom: 2px solid var(--brand);
-    transform: rotate(45deg) translateY(-3px);
-    transition: transform 0.2s ease;
-  }
-  .faq-item[open] summary::after {
-    transform: rotate(-135deg) translateY(-2px);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand-ink);
+    background: var(--tint);
+    border-radius: 6px;
+    padding: 1px 7px;
+    font-variant-numeric: tabular-nums;
   }
   .faq-a {
-    padding: 0 20px 18px;
     display: grid;
     gap: 10px;
     color: var(--text);
+    padding-left: 46px;
   }
   .faq-cta {
     margin-top: 32px;
@@ -98,11 +85,11 @@ import ActionLink from '../ActionLink.astro';
     font-weight: 600;
   }
   @media (max-width: 639px) {
-    summary {
-      padding: 14px 16px;
+    .faq-item {
+      padding: 16px;
     }
     .faq-a {
-      padding: 0 16px 16px;
+      padding-left: 0;
     }
     .faq-cta :global(.btn) {
       width: 100%;

@@ -1,13 +1,15 @@
 ---
-import { PLANS, PLAN_GROUPS } from '../../data/plans';
+import { PLANS, PLAN_GROUPS, getPlan } from '../../data/plans';
+const minMonthly = Math.min(...PLANS.filter((p) => p.paymentCycle === 'month').map((p) => p.priceAmount));
+const yearPlan = getPlan('chuanyun');
 import PlanCard from './PlanCard.astro';
 ---
 <section class="section" id="plans" aria-labelledby="plans-title">
   <div class="container">
     <div class="section-head">
       <p class="eyebrow">套餐方案</p>
-      <h2 id="plans-title">灵动云套餐价格：{PLANS.length} 档方案</h2>
-      <p>付款方式与流量周期分开标注，选择前请留意是“每月额度”还是“总流量包”。</p>
+      <h2 id="plans-title">灵动云机场套餐价格：{PLANS.length} 档方案</h2>
+      <p>月付机场、年付机场与不限时流量包一次看全：月付 ¥{minMonthly} 起，年付 {yearPlan.displayPrice}{yearPlan.displayPriceSuffix} 每月 {yearPlan.displayTraffic.replace('/月', '')}，一次性流量包不按月续费。每张卡片分开标注付款方式与流量周期，方便对比性价比。</p>
     </div>
 
     <ul class="plan-legend" aria-label="套餐类型说明">

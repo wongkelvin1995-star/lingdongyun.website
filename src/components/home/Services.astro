@@ -1,37 +1,49 @@
 ---
 const items = [
   {
-    title: '三类套餐结构',
-    text: '月付按月获得额度；年付一次付清全年、流量每月发放；一次性流量包只付一次款，获得一笔总流量。',
+    title: '月付、年付、不限时流量包',
+    text: '三种付费方式共 8 档：月付机场按月续费、灵活升降档；年付一次付清全年、每月发放流量；不限时流量包只付一次，适合用量不固定的用户。',
     link: { href: '/guides/plan-selection/', label: '比较三类套餐' },
     icon: 'M4 6h16M4 12h16M4 18h10',
   },
   {
-    title: 'BGP 接入',
-    text: '运营方资料提及采用 BGP 接入。BGP 描述的是网络之间的路由与接入方式，不等同于 IPLC / IEPL 专线。',
-    link: { href: '/guides/routes-and-protocols/', label: '了解线路与协议' },
+    title: '低门槛，高性价比',
+    text: '月付入门档价格亲民，年付折合每月成本更低，学生党和预算有限的用户也能找到合适的便宜机场方案，再按实际用量升级。',
+    link: { href: '/guides/traffic-budget/', label: '按用途估算流量' },
+    icon: 'M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6',
+  },
+  {
+    title: 'BGP 多线接入',
+    text: '灵动云采用 BGP 接入，电信、联通、移动用户可由路由协议自动选择较合适的路径，让不同运营商的连接更均衡。',
+    link: { href: '/guides/routes-and-protocols/', label: '了解 BGP 与专线区别' },
     icon: 'M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v7',
   },
   {
     title: 'Shadowsocks（SS）协议',
-    text: '运营方资料提及支持 SS 协议。能否在某个客户端中使用，还取决于该客户端支持的订阅格式。',
+    text: 'SS 是轻量、成熟的加密代理协议，资源占用低，Clash、小火箭、v2rayN 等主流科学上网客户端普遍支持。',
     link: { href: '/guides/clash-subscription/', label: '查看订阅导入教程' },
     icon: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z',
   },
   {
-    title: '订阅与客户端',
-    text: '在用户中心复制订阅链接，导入 Clash、小火箭等客户端后更新节点列表，再选择节点测试连接。',
-    link: { href: '/guides/network-basics/', label: '先看入门概念' },
+    title: '全平台客户端',
+    text: 'Windows、macOS、Android、iOS 均可使用。复制一条订阅链接，即可在 Clash Verge、小火箭、v2rayNG 等客户端中一键导入节点。',
+    link: { href: '#clients', label: '查看客户端与快速开始' },
     icon: 'M7 4h10v16H7zM10 17h4',
+  },
+  {
+    title: '完整中文教程',
+    text: '从注册、选套餐、导入订阅到节点超时排查，官网提供 8 篇原创中文教程，新手也能顺利完成第一次连接。',
+    link: { href: '/guides/', label: '浏览全部教程' },
+    icon: 'M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3',
   },
 ];
 ---
 <section class="section section--soft" id="service" aria-labelledby="service-title">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">服务与使用说明</p>
-      <h2 id="service-title">了解灵动云：套餐、接入与订阅使用</h2>
-      <p>以下技术描述来自运营方提供的资料；节点地区、数量等未提供的信息，本站不作补充。</p>
+      <p class="eyebrow">灵动云优势</p>
+      <h2 id="service-title">为什么选择灵动云机场</h2>
+      <p>灵动云把价格、线路与使用门槛都做得清楚透明：多种付费方式、BGP 接入、SS 协议、多平台客户端，以及完整的中文教程。</p>
     </div>
     <ul class="svc-grid">
       {items.map((it) => (
@@ -56,7 +68,7 @@ const items = [
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
   }
   .svc {
