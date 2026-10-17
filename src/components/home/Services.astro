@@ -1,0 +1,102 @@
+---
+const items = [
+  {
+    title: '三类套餐结构',
+    text: '月付按月获得额度；年付一次付清全年、流量每月发放；一次性流量包只付一次款，获得一笔总流量。',
+    link: { href: '/guides/plan-selection/', label: '比较三类套餐' },
+    icon: 'M4 6h16M4 12h16M4 18h10',
+  },
+  {
+    title: 'BGP 接入',
+    text: '运营方资料提及采用 BGP 接入。BGP 描述的是网络之间的路由与接入方式，不等同于 IPLC / IEPL 专线。',
+    link: { href: '/guides/routes-and-protocols/', label: '了解线路与协议' },
+    icon: 'M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v7',
+  },
+  {
+    title: 'Shadowsocks（SS）协议',
+    text: '运营方资料提及支持 SS 协议。能否在某个客户端中使用，还取决于该客户端支持的订阅格式。',
+    link: { href: '/guides/clash-subscription/', label: '查看订阅导入教程' },
+    icon: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z',
+  },
+  {
+    title: '订阅与客户端',
+    text: '在用户中心复制订阅链接，导入 Clash、小火箭等客户端后更新节点列表，再选择节点测试连接。',
+    link: { href: '/guides/network-basics/', label: '先看入门概念' },
+    icon: 'M7 4h10v16H7zM10 17h4',
+  },
+];
+---
+<section class="section section--soft" id="service" aria-labelledby="service-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">服务与使用说明</p>
+      <h2 id="service-title">了解灵动云：套餐、接入与订阅使用</h2>
+      <p>以下技术描述来自运营方提供的资料；节点地区、数量等未提供的信息，本站不作补充。</p>
+    </div>
+    <ul class="svc-grid">
+      {items.map((it) => (
+        <li class="card svc">
+          <span class="svc-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <path d={it.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <h3>{it.title}</h3>
+          <p>{it.text}</p>
+          <a href={it.link.href}>{it.link.label} →</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .svc-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .svc {
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .svc-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--tint);
+    color: var(--brand);
+    display: grid;
+    place-items: center;
+  }
+  .svc h3 {
+    font-size: 18px;
+  }
+  .svc p {
+    font-size: 15px;
+    flex: 1;
+  }
+  .svc a {
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .svc a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 1099px) {
+    .svc-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .svc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

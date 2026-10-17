@@ -1,0 +1,112 @@
+---
+import { getPlan, priceText, trafficText } from '../../data/plans';
+
+const scenarios = [
+  {
+    title: '轻度浏览与办公',
+    text: '以网页、邮件、即时通讯和文档协作为主，视频较少。',
+    picks: ['fufeng', 'chuanyun'],
+  },
+  {
+    title: '日常使用，适量视频',
+    text: '每天都会用，偶尔看高清视频或下载更新，单人多设备。',
+    picks: ['yulang', 'poxiao'],
+  },
+  {
+    title: '重度视频与大文件',
+    text: '长时间高清视频、大文件同步或多人共用，月用量较高。',
+    picks: ['poxiao', 'lingxiao'],
+  },
+  {
+    title: '用量不规律',
+    text: '有时一个月几乎不用，有时集中使用，不想每月续费。',
+    picks: ['xianyun', 'jingyun', 'feiyun'],
+  },
+].map((s) => ({ ...s, plans: s.picks.map(getPlan) }));
+---
+<section class="section section--soft" id="scenarios" aria-labelledby="scenarios-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">编辑建议</p>
+      <h2 id="scenarios-title">使用场景与选择建议</h2>
+      <p>以下是本站编辑根据套餐结构给出的选择思路，不是用户评价，也不代表实测数据。</p>
+    </div>
+    <ul class="sc-grid">
+      {scenarios.map((s) => (
+        <li class="card sc">
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+          <ul class="sc-picks" aria-label="可考虑的套餐">
+            {s.plans.map((p) => (
+              <li>
+                <a href={`#plan-${p.id}`}>{p.name}</a>
+                <span>{priceText(p)} · {trafficText(p)}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+    <p class="sc-more">想更精确地估算？阅读 <a href="/guides/traffic-budget/">按用途估算流量需求</a>。</p>
+  </div>
+</section>
+
+<style>
+  .sc-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .sc {
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sc h3 {
+    font-size: 17px;
+  }
+  .sc > p {
+    font-size: 14.5px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .sc-picks {
+    list-style: none;
+    padding: 12px 0 0;
+    margin: 4px 0 0;
+    border-top: 1px dashed var(--line);
+    display: grid;
+    gap: 8px;
+  }
+  .sc-picks a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .sc-picks a:hover {
+    text-decoration: underline;
+  }
+  .sc-picks span {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .sc-more {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 15px;
+  }
+  @media (max-width: 1099px) {
+    .sc-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .sc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

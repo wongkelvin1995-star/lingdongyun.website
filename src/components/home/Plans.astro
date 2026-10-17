@@ -1,0 +1,101 @@
+---
+import { PLANS, PLAN_GROUPS } from '../../data/plans';
+import { SITE } from '../../config/site';
+import PlanCard from './PlanCard.astro';
+---
+<section class="section" id="plans" aria-labelledby="plans-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">套餐方案</p>
+      <h2 id="plans-title">灵动云套餐价格：{PLANS.length} 档方案</h2>
+      <p>付款方式与流量周期分开标注，选择前请留意是“每月额度”还是“总流量包”。</p>
+    </div>
+
+    <ul class="plan-legend" aria-label="套餐类型说明">
+      {PLAN_GROUPS.map((g) => (
+        <li class={`lg-${g.key}`}>
+          <strong>{g.title}</strong>
+          <span>{g.desc}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="plan-grid">
+      {PLANS.map((p) => <PlanCard plan={p} />)}
+    </div>
+
+    <div class="plan-notes">
+      <p>
+        价格与流量来自运营方提供的套餐资料（整理于 {SITE.dataUpdated}），尚未与在线结算页逐项核对；月付档位标注“起”，最终价格以结算页为准。
+      </p>
+      <p>
+        月度额度的重置日期、结转规则、设备数、速率与退款政策请在用户中心查看。1.5TB 按 1500GB 计。一次性流量包的有效期与使用规则以后台条款为准。
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .plan-legend {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto 36px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .plan-legend li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .plan-legend strong {
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .plan-legend span {
+    color: var(--muted);
+  }
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 34px;
+  }
+  .plan-notes {
+    margin-top: 32px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--text);
+    display: grid;
+    gap: 6px;
+  }
+  @media (max-width: 1199px) {
+    .plan-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .plan-grid {
+      grid-template-columns: 1fr;
+    }
+    .plan-legend {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .plan-legend li {
+      border-radius: 12px;
+      flex-wrap: wrap;
+      row-gap: 0;
+    }
+  }
+</style>

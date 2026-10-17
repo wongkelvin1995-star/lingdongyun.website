@@ -1,0 +1,22 @@
+---
+interface Props {
+  size?: number;
+  /** 同一页面出现多次时传入不同 id，避免渐变 id 重复 */
+  gid?: string;
+}
+const { size = 34, gid = 'lg-logo' } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6a3df0" />
+      <stop offset="1" stop-color="#2f63e6" />
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="11" fill={`url(#${gid})`} />
+  <path
+    d="M13.2 27.5h13.6a5.3 5.3 0 0 0 .7-10.55 7.1 7.1 0 0 0-13.6 1.9 4.35 4.35 0 0 0-.7 8.65Z"
+    fill="#fff"
+  />
+  <path d="M14.6 22.6c1.8-1.5 3.6 1.5 5.4 0s3.6-1.5 5.4 0" stroke="#5a48ee" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>

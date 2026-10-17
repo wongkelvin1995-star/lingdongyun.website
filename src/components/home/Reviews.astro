@@ -1,0 +1,58 @@
+---
+/**
+ * 真实用户评价列表。REVIEWS 为空时不渲染任何内容（生产页隐藏）。
+ * 不输出 Review / AggregateRating 结构化数据。
+ */
+import { REVIEWS } from '../../data/reviews';
+import { PLANS } from '../../data/plans';
+const planName = (id?: string) => PLANS.find((p) => p.id === id)?.name;
+---
+{REVIEWS.length > 0 && (
+  <section class="section section--soft" id="reviews" aria-labelledby="reviews-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">用户评价</p>
+        <h2 id="reviews-title">用户评价</h2>
+        <p>以下评价由运营方提供并获授权展示，注明来源与日期。</p>
+      </div>
+      <ul class="reviews">
+        {REVIEWS.map((r) => (
+          <li class="card review">
+            <blockquote><p>{r.content}</p></blockquote>
+            <p class="who">
+              {r.displayName}
+              {planName(r.planId) && <span> · {planName(r.planId)}</span>}
+            </p>
+            <p class="src"><time datetime={r.date}>{r.date}</time> · {r.source}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .reviews {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+  .review {
+    padding: 20px;
+  }
+  blockquote {
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .who {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .src {
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import { SITE, abs } from '../../config/site';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const title = `灵动云使用教程：套餐选择、订阅导入与排查（${guides.length} 篇）｜${SITE.name}`;
+const description = `灵动云使用教程目录，共 ${guides.length} 篇：套餐与流量选择、Clash 与小火箭订阅导入、Windows 与 Android 客户端、线路与协议概念、订阅更新失败与节点超时排查。`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '灵动云使用教程',
+    description,
+    url: abs('/guides/'),
+    inLanguage: SITE.lang,
+    isPartOf: { '@id': abs('/#website') },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: guides.map((g, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: abs(`/guides/${g.id}/`),
+        name: g.data.title,
+      })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '首页', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: '使用教程', item: abs('/guides/') },
+    ],
+  },
+];
+---
+<BaseLayout title={title} description={description} path="/guides/" jsonLd={jsonLd}>
+  <div class="g-top">
+    <div class="container">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '使用教程' }]} />
+      <h1>灵动云使用教程</h1>
+      <p>共 {guides.length} 篇原创文章。建议新用户按顺序阅读：先选套餐，再了解概念，然后按设备导入订阅，遇到问题时查看排查清单。</p>
+    </div>
+  </div>
+  <div class="container g-body">
+    <ol class="g-list">
+      {guides.map((g) => (
+        <li>
+          <GuideCard
+            slug={g.id}
+            title={g.data.title}
+            shortTitle={g.data.title}
+            description={g.data.description}
+            category={g.data.category}
+            date={g.data.updatedDate ?? g.data.pubDate}
+            headingLevel="h2"
+          />
+        </li>
+      ))}
+    </ol>
+    <p class="g-back">
+      <a href="/#plans">查看套餐价格</a>
+      <a href="/#clients">客户端与快速开始</a>
+      <a href="/#faq">常见问题</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .g-top {
+    background: linear-gradient(180deg, #faf8ff, #fff);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0 36px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 22px 0 12px;
+  }
+  .g-top p {
+    max-width: 720px;
+  }
+  .g-body {
+    padding-top: 36px;
+    padding-bottom: 64px;
+  }
+  .g-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .g-list > li {
+    display: flex;
+  }
+  .g-list > li > :global(*) {
+    flex: 1;
+  }
+  .g-back {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .g-back a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    text-decoration: none;
+  }
+  .g-back a:hover {
+    background: var(--tint);
+  }
+  @media (max-width: 767px) {
+    .g-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

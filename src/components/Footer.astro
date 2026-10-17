@@ -1,0 +1,129 @@
+---
+import { NAV, RESOURCE_LINKS, SITE, CONTACTS } from '../config/site';
+import Logo from './Logo.astro';
+import ActionLink from './ActionLink.astro';
+
+const onHome = Astro.url.pathname === '/';
+const resolve = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
+const year = new Date(SITE.dataUpdated).getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/">
+        <Logo size={30} gid="lg-logo-footer" />
+        <span>{SITE.brand}</span>
+      </a>
+      <p>
+        灵动云提供月付、年付与一次性流量包方案。注册、订购与订阅管理请通过官方入口完成。
+      </p>
+      <ActionLink variant="ghost" size="sm">前往官网</ActionLink>
+    </div>
+
+    <nav class="footer-col" aria-label="页脚导航">
+      <h2>站内导航</h2>
+      <ul>
+        {NAV.map((n) => <li><a href={resolve(n.href)}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="footer-col">
+      <h2>常用教程</h2>
+      <ul>
+        <li><a href="/guides/plan-selection/">套餐怎么选</a></li>
+        <li><a href="/guides/clash-subscription/">Clash 订阅导入</a></li>
+        <li><a href="/guides/shadowrocket/">小火箭使用教程</a></li>
+        <li><a href="/guides/troubleshooting/">订阅与节点排查</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h2>资源链接</h2>
+      <ul>
+        {RESOURCE_LINKS.map((r) => (
+          <li><a href={r.href} target="_blank" rel="noopener noreferrer">{r.label}</a></li>
+        ))}
+      </ul>
+      {CONTACTS.telegram && <p><a href={CONTACTS.telegram} rel="noopener noreferrer" target="_blank">Telegram</a></p>}
+      {CONTACTS.email && <p><a href={`mailto:${CONTACTS.email}`}>{CONTACTS.email}</a></p>}
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>
+      套餐信息来自运营方提供的资料（整理于 {SITE.dataUpdated}），最终价格与规则以官方入口结算页及用户中心为准。请在所在地法律法规允许的范围内使用网络服务。
+    </p>
+    <p>© {year} {SITE.brand} · lingdongyun.website</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 56px 0 28px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .footer-brand p {
+    max-width: 340px;
+    margin-bottom: 16px;
+  }
+  .footer-col h2 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .footer-col a {
+    color: var(--text);
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px 0;
+  }
+  .footer-col a:hover {
+    color: var(--brand-ink);
+    text-decoration: underline;
+  }
+  .footer-bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+  }
+  @media (max-width: 899px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 420px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

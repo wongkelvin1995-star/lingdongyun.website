@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Services from '../components/home/Services.astro';
+import Plans from '../components/home/Plans.astro';
+import Clients from '../components/home/Clients.astro';
+import Guides from '../components/home/Guides.astro';
+import Reviews from '../components/home/Reviews.astro';
+import Scenarios from '../components/home/Scenarios.astro';
+import Faq from '../components/home/Faq.astro';
+import { SITE, abs } from '../config/site';
+import { FAQS, stripHtml } from '../data/faq';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': abs('/#website'),
+    name: SITE.name,
+    alternateName: SITE.brand,
+    url: abs('/'),
+    inLanguage: SITE.lang,
+    description: SITE.defaultDescription,
+    publisher: { '@id': abs('/#organization') },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': abs('/#organization'),
+    name: SITE.brand,
+    url: abs('/'),
+    logo: abs('/apple-touch-icon.png'),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': abs('/#faq'),
+    inLanguage: SITE.lang,
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.map(stripHtml).join('\n') },
+    })),
+  },
+];
+---
+<BaseLayout jsonLd={jsonLd}>
+  <Hero />
+  <Services />
+  <Plans />
+  <Clients />
+  <Guides />
+  <Reviews />
+  <Scenarios />
+  <Faq />
+</BaseLayout>

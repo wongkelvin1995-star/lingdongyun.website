@@ -1,0 +1,374 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PlanTable from '../../components/PlanTable.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import ActionLink from '../../components/ActionLink.astro';
+import { SITE, abs } from '../../config/site';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+  return guides.map((entry) => ({ params: { slug: entry.id }, props: { entry, all: guides } }));
+}
+
+const { entry, all } = Astro.props;
+const { Content, headings } = await render(entry);
+const d = entry.data;
+const path = `/guides/${entry.id}/`;
+const toc = headings.filter((h) => h.depth === 2);
+const iso = (dt: Date) => dt.toISOString().slice(0, 10);
+const published = iso(d.pubDate);
+const modified = iso(d.updatedDate ?? d.pubDate);
+
+// 正文中文字数（用于阅读时长估算）
+const body = entry.body ?? '';
+const cjkCount = (body.match(/[一-鿿]/g) || []).length;
+const minutes = Math.max(3, Math.round(cjkCount / 400));
+
+const related = d.related
+  .map((slug) => all.find((g) => g.id === slug))
+  .filter((g): g is (typeof all)[number] => Boolean(g));
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.title,
+    description: d.description,
+    inLanguage: SITE.lang,
+    datePublished: published,
+    dateModified: modified,
+    mainEntityOfPage: abs(path),
+    url: abs(path),
+    image: abs(SITE.ogImage),
+    keywords: d.keywords.join(', '),
+    author: { '@type': 'Organization', name: `${SITE.brand}编辑部`, url: abs('/') },
+    publisher: { '@type': 'Organization', '@id': abs('/#organization'), name: SITE.brand, logo: { '@type': 'ImageObject', url: abs('/apple-touch-icon.png') } },
+    isPartOf: { '@id': abs('/#website') },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '首页', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: '使用教程', item: abs('/guides/') },
+      { '@type': 'ListItem', position: 3, name: d.shortTitle, item: abs(path) },
+    ],
+  },
+];
+---
+<BaseLayout
+  title={`${d.title}｜${SITE.name}`}
+  description={d.description}
+  path={path}
+  ogType="article"
+  jsonLd={jsonLd}
+  publishedTime={published}
+  modifiedTime={modified}
+>
+  <div class="article-top">
+    <div class="container narrow">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '使用教程', href: '/guides/' }, { label: d.shortTitle }]} />
+      <p class="a-cat">{d.category}</p>
+      <h1>{d.title}</h1>
+      <p class="a-lead">{d.description}</p>
+      <p class="a-meta">
+        <span>发布 <time datetime={published}>{published}</time></span>
+        {modified !== published && <span>更新 <time datetime={modified}>{modified}</time></span>}
+        <span>约 {minutes} 分钟阅读</span>
+        <span>{SITE.brand}编辑部</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="container article-layout">
+    {toc.length > 0 && (
+      <aside class="toc" aria-labelledby="toc-title">
+        <details open>
+          <summary id="toc-title">本文目录</summary>
+          <ol>
+            {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ol>
+        </details>
+      </aside>
+    )}
+
+    <article class="prose">
+      <Content />
+      {d.showPlanTable && (
+        <>
+          <h2 id="plan-table">附：灵动云套餐对照表</h2>
+          <PlanTable />
+        </>
+      )}
+
+      <div class="a-cta">
+        <div>
+          <p class="a-cta-title">在官方入口完成注册与订购</p>
+          <p>套餐、订阅链接与客户端说明均在用户中心提供。</p>
+        </div>
+        <ActionLink>前往官网</ActionLink>
+      </div>
+
+      <nav class="back-links" aria-label="返回首页区域">
+        <a href="/#plans">查看全部套餐</a>
+        <a href="/#clients">客户端与快速开始</a>
+        <a href="/#faq">常见问题</a>
+        <a href="/guides/">全部教程</a>
+      </nav>
+    </article>
+  </div>
+
+  {related.length > 0 && (
+    <section class="related" aria-labelledby="related-title">
+      <div class="container">
+        <h2 id="related-title">相关教程</h2>
+        <div class="related-grid">
+          {related.map((g) => (
+            <GuideCard
+              slug={g.id}
+              title={g.data.title}
+              shortTitle={g.data.shortTitle}
+              description={g.data.description}
+              category={g.data.category}
+              date={g.data.updatedDate ?? g.data.pubDate}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: calc(860px + var(--gutter) * 2);
+  }
+  .article-top {
+    background:
+      radial-gradient(520px 220px at 90% 0%, rgba(120, 140, 255, 0.08), transparent 70%),
+      linear-gradient(180deg, #faf8ff, #fff);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0 32px;
+  }
+  .a-cat {
+    display: inline-block;
+    margin-top: 22px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-ink);
+    background: var(--tint);
+    border-radius: 999px;
+    padding: 2px 12px;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    margin: 12px 0 14px;
+    line-height: 1.35;
+  }
+  .a-lead {
+    font-size: 17px;
+    color: var(--text);
+  }
+  .a-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .article-layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 760px);
+    justify-content: center;
+    gap: 48px;
+    padding-top: 36px;
+    padding-bottom: 56px;
+  }
+  .toc {
+    position: sticky;
+    top: 92px;
+    align-self: start;
+    font-size: 14px;
+  }
+  .toc summary {
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 6px 0;
+    list-style: none;
+  }
+  .toc summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc ol {
+    margin: 6px 0 0;
+    padding: 0 0 0 14px;
+    border-left: 2px solid var(--line);
+    display: grid;
+    gap: 2px;
+    list-style: none;
+  }
+  .toc a {
+    display: block;
+    padding: 5px 0;
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.5;
+  }
+  .toc a:hover {
+    color: var(--brand-ink);
+  }
+  .prose {
+    min-width: 0;
+    font-size: 16.5px;
+    line-height: 1.9;
+    color: #34354b;
+  }
+  .prose :global(h2) {
+    font-size: 23px;
+    margin: 40px 0 14px;
+    padding-top: 4px;
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose :global(h3) {
+    font-size: 19px;
+    margin: 28px 0 10px;
+  }
+  .prose :global(p) {
+    margin: 0 0 16px;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 18px;
+    padding-left: 1.4em;
+  }
+  .prose :global(li) {
+    margin: 4px 0;
+  }
+  .prose :global(strong) {
+    color: var(--ink);
+  }
+  .prose :global(blockquote) {
+    margin: 20px 0;
+    padding: 12px 18px;
+    background: var(--tint);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 10px 10px 0;
+    color: var(--text);
+  }
+  .prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+  .prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1px 6px;
+  }
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 24px;
+    font-size: 15px;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose :global(thead th) {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .a-cta {
+    margin: 40px 0 24px;
+    padding: 22px 24px;
+    border-radius: 16px;
+    background: var(--tint);
+    border: 1px solid #e7defe;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .a-cta p {
+    margin: 0;
+    font-size: 15px;
+  }
+  .a-cta .a-cta-title {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 17px;
+  }
+  .back-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .back-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .back-links a:hover {
+    border-color: #cbbdf8;
+    color: var(--brand-ink);
+  }
+  .related {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 48px 0 56px;
+  }
+  .related h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  @media (max-width: 959px) {
+    .article-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      padding-top: 24px;
+    }
+    .toc {
+      position: static;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 639px) {
+    .prose {
+      font-size: 16px;
+    }
+    .a-cta :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

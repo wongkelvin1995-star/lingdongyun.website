@@ -1,0 +1,87 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  shortTitle: string;
+  description: string;
+  category: string;
+  date: Date;
+  headingLevel?: 'h2' | 'h3';
+}
+const { slug, shortTitle, description, category, date, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const iso = date.toISOString().slice(0, 10);
+---
+<article class="guide-card">
+  <p class="g-cat">{category}</p>
+  <H class="g-title"><a href={`/guides/${slug}/`}>{shortTitle}</a></H>
+  <p class="g-desc">{description}</p>
+  <p class="g-meta"><time datetime={iso}>{iso}</time><span aria-hidden="true">阅读 →</span></p>
+</article>
+
+<style>
+  .guide-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    min-width: 0;
+  }
+  .guide-card:hover,
+  .guide-card:focus-within {
+    border-color: #cbbdf8;
+    box-shadow: var(--shadow);
+  }
+  .g-cat {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--brand-ink);
+    background: var(--tint);
+    align-self: flex-start;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .g-title {
+    font-size: 17px;
+    line-height: 1.45;
+  }
+  .g-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .g-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+  }
+  .g-title a:focus-visible {
+    outline: none;
+  }
+  .g-title a:focus-visible::after {
+    outline: 3px solid #8b6cff;
+    outline-offset: 2px;
+  }
+  .g-desc {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .g-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .g-meta span {
+    color: var(--brand-ink);
+    font-weight: 600;
+  }
+</style>

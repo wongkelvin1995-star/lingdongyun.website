@@ -1,0 +1,204 @@
+---
+import type { Plan } from '../../data/plans';
+import ActionLink from '../ActionLink.astro';
+
+interface Props {
+  plan: Plan;
+}
+const { plan } = Astro.props;
+const typeClass = `type-${plan.paymentCycle}`;
+---
+<article
+  class:list={['plan', typeClass, { 'is-highlight': plan.highlight }]}
+  id={`plan-${plan.id}`}
+  aria-labelledby={`plan-${plan.id}-name`}
+  data-plan-id={plan.id}
+>
+  <p class="plan-tag">{plan.tag}</p>
+  <h3 id={`plan-${plan.id}-name`} class="plan-name">{plan.name}</h3>
+  <p class="plan-summary">{plan.summary}</p>
+
+  <div class="plan-price">
+    <p class="price-line">
+      <span class="price-num">{plan.displayPrice}</span>
+      <span class="price-suffix">{plan.displayPriceSuffix}</span>
+    </p>
+    <p class="pay-label">{plan.paymentLabel}</p>
+    {plan.priceNote && <p class="price-note">{plan.priceNote}</p>}
+  </div>
+
+  <div class="plan-traffic">
+    <span class="traffic-k">流量</span>
+    <span class="traffic-v">{plan.displayTraffic}</span>
+    <span class="traffic-p">{plan.trafficLabel}</span>
+  </div>
+
+  <ul class="plan-features">
+    {plan.features.map((f) => <li>{f}</li>)}
+  </ul>
+
+  <div class="plan-cta">
+    <ActionLink block variant={plan.highlight ? 'primary' : 'ghost'} ariaLabel={`购买套餐：${plan.name}（前往官方入口）`}>
+      购买套餐
+    </ActionLink>
+  </div>
+</article>
+
+<style>
+  .plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 30px 22px 22px;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .plan:hover {
+    box-shadow: var(--shadow);
+  }
+  .plan.is-highlight {
+    background: linear-gradient(180deg, #f7f3ff 0%, #ffffff 60%);
+    border: 1.5px solid #8f6cf6;
+    box-shadow: 0 10px 30px rgba(106, 61, 240, 0.12);
+  }
+  .plan-tag {
+    position: absolute;
+    top: -13px;
+    left: 20px;
+    max-width: calc(100% - 40px);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #fff;
+    color: var(--brand-ink);
+    border: 1px solid #ddd3fb;
+  }
+  .is-highlight .plan-tag {
+    background: var(--grad);
+    color: #fff;
+    border-color: transparent;
+  }
+  .type-year .plan-tag {
+    color: #1e4fb8;
+    border-color: #cfdcf8;
+    background: #f3f7ff;
+  }
+  .type-once .plan-tag {
+    color: #3e4058;
+    border-color: #dcdde8;
+    background: #f7f7fb;
+  }
+  .plan-name {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .plan-summary {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    min-height: 3.2em;
+  }
+  .plan-price {
+    margin: 16px 0 14px;
+  }
+  .price-line {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .price-num {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .price-suffix {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pay-label {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-ink);
+    background: var(--tint);
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+  .price-note {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .plan-traffic {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'k v' 'p p';
+    align-items: baseline;
+    column-gap: 10px;
+    background: var(--tint-blue);
+    border: 1px solid #dbe6fb;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .traffic-k {
+    grid-area: k;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .traffic-v {
+    grid-area: v;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--traffic);
+    white-space: nowrap;
+  }
+  .traffic-p {
+    grid-area: p;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2b4f99;
+  }
+  .plan-features {
+    list-style: none;
+    margin: 16px 0 20px;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    font-size: 14.5px;
+    flex: 1;
+  }
+  .plan-features li {
+    position: relative;
+    padding-left: 22px;
+    line-height: 1.55;
+  }
+  .plan-features li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.45em;
+    width: 12px;
+    height: 7px;
+    border-left: 2px solid var(--brand);
+    border-bottom: 2px solid var(--brand);
+    transform: rotate(-45deg);
+  }
+  .plan-cta :global(.btn) {
+    min-height: 46px;
+  }
+</style>

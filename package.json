@@ -1,0 +1,25 @@
+{
+  "name": "lingdongyun-website",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "灵动云官网 · lingdongyun.website 品牌落地页（Astro 静态站点）",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify": "node scripts/verify-dist.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.3",
+    "astro": "^7.4.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+---
+/**
+ * 所有外部业务操作按钮（注册 / 购买 / 前往官网 / 用户中心 / 获取客户端）统一使用此组件，
+ * href 固定读取 ACTION_URL。不加 download 属性，不指向安装包。
+ */
+import { ACTION_URL } from '../config/site';
+import ExtIcon from './ExtIcon.astro';
+
+interface Props {
+  variant?: 'primary' | 'ghost';
+  size?: 'sm' | 'md';
+  block?: boolean;
+  class?: string;
+  ariaLabel?: string;
+}
+const { variant = 'primary', size = 'md', block = false, class: cls = '', ariaLabel } = Astro.props;
+const classes = ['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', block && 'btn--block', cls]
+  .filter(Boolean)
+  .join(' ');
+---
+<a
+  class={classes}
+  href={ACTION_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-action="official"
+  aria-label={ariaLabel}
+><slot /><ExtIcon /></a>

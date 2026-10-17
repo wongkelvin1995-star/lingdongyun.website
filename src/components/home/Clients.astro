@@ -1,0 +1,215 @@
+---
+import { PLATFORMS, QUICK_STEPS } from '../../data/platforms';
+import ActionLink from '../ActionLink.astro';
+---
+<section class="section section--soft" id="clients" aria-labelledby="clients-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">客户端与快速开始</p>
+      <h2 id="clients-title">灵动云客户端与订阅：六步完成首次连接</h2>
+      <p>本站不托管安装包。客户端信息与订阅链接请在用户中心获取，具体兼容客户端以官方当前说明为准。</p>
+    </div>
+
+    <ol class="steps">
+      {QUICK_STEPS.map((s, i) => (
+        <li>
+          <span class="step-n" aria-hidden="true">{i + 1}</span>
+          <div>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="card tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="选择设备平台">
+        {PLATFORMS.map((p, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${p.id}`}
+            aria-controls={`panel-${p.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+      {PLATFORMS.map((p) => (
+        <div class="tabpanel" role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tab-${p.id}`} tabindex="0">
+          <h3 class="panel-title">{p.label} 使用要点</h3>
+          <p>{p.intro}</p>
+          <ul class="panel-steps">
+            {p.steps.map((s) => <li>{s}</li>)}
+          </ul>
+          <p class="panel-note">{p.note}</p>
+          <div class="panel-actions">
+            <ActionLink>前往官网获取客户端</ActionLink>
+            {p.guide && <a class="btn btn--ghost" href={p.guide.href}>{p.guide.label}</a>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls') || ''));
+    const select = (idx: number, focus = false) => {
+      tabs.forEach((t, i) => {
+        const on = i === idx;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        panels[i]?.toggleAttribute('hidden', !on);
+      });
+      if (focus) tabs[idx].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const keys: Record<string, number> = {
+          ArrowRight: (i + 1) % tabs.length,
+          ArrowLeft: (i - 1 + tabs.length) % tabs.length,
+          Home: 0,
+          End: tabs.length - 1,
+        };
+        if (e.key in keys) {
+          e.preventDefault();
+          select(keys[e.key], true);
+        }
+      });
+    });
+    root.classList.add('is-enhanced');
+    select(0);
+  });
+</script>
+
+<style>
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 36px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+    counter-reset: none;
+  }
+  .steps li {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .step-n {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--grad);
+    color: #fff;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+  }
+  .steps h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .steps p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tabs {
+    padding: 8px;
+  }
+  .tablist {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow-x: auto;
+  }
+  .tabs:not(.is-enhanced) .tablist {
+    display: none;
+  }
+  [role='tab'] {
+    flex: 1 1 0;
+    min-height: 44px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    padding: 0 14px;
+    white-space: nowrap;
+  }
+  [role='tab'][aria-selected='true'] {
+    background: #fff;
+    color: var(--brand-ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .tabpanel {
+    padding: 22px 20px 18px;
+  }
+  .tabs:not(.is-enhanced) .tabpanel + .tabpanel {
+    border-top: 1px solid var(--line);
+  }
+  .panel-title {
+    font-size: 19px;
+    margin-bottom: 8px;
+  }
+  .panel-steps {
+    margin: 14px 0;
+    padding-left: 1.3em;
+    display: grid;
+    gap: 4px;
+  }
+  .panel-note {
+    font-size: 14px;
+    color: var(--muted);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  @media (max-width: 1099px) {
+    .steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .steps li {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    .step-n {
+      flex: none;
+    }
+    .panel-actions .btn {
+      width: 100%;
+      white-space: normal;
+    }
+    .tabpanel {
+      padding: 18px 10px 12px;
+    }
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import GuideCard from '../GuideCard.astro';
+
+const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+---
+<section class="section" id="guides" aria-labelledby="guides-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">使用教程</p>
+      <h2 id="guides-title">灵动云使用教程与入门文章</h2>
+      <p>从套餐选择、订阅导入到故障排查，{guides.length} 篇原创教程覆盖常见使用问题。</p>
+    </div>
+    <div class="guide-grid">
+      {guides.map((g) => (
+        <GuideCard
+          slug={g.id}
+          title={g.data.title}
+          shortTitle={g.data.shortTitle}
+          description={g.data.description}
+          category={g.data.category}
+          date={g.data.updatedDate ?? g.data.pubDate}
+        />
+      ))}
+    </div>
+    <p class="more"><a class="btn btn--ghost" href="/guides/">查看全部 {guides.length} 篇教程</a></p>
+  </div>
+</section>
+
+<style>
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .more {
+    text-align: center;
+    margin-top: 30px;
+  }
+  @media (max-width: 1099px) {
+    .guide-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .guide-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

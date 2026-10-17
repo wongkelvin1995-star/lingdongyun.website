@@ -1,0 +1,193 @@
+---
+import ActionLink from '../ActionLink.astro';
+import { PLANS } from '../../data/plans';
+
+const monthly = PLANS.filter((p) => p.paymentCycle === 'month');
+const yearly = PLANS.filter((p) => p.paymentCycle === 'year');
+const once = PLANS.filter((p) => p.paymentCycle === 'once');
+const minPrice = (list: typeof PLANS) => Math.min(...list.map((p) => p.priceAmount));
+const facts = [
+  { k: `${PLANS.length} 档`, v: '套餐可选' },
+  { k: `¥${minPrice(monthly)} 起`, v: `月付 · ${monthly.length} 档` },
+  { k: `¥${minPrice(yearly)}/年`, v: '年付 · 每月发放' },
+  { k: `${once.length} 档`, v: '一次性流量包' },
+];
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">月付 · 年付 · 一次性流量包</p>
+      <h1 id="hero-title">灵动云官网</h1>
+      <p class="hero-sub">月付、年付与一次性流量方案，按预算和使用需求选择。</p>
+      <p class="hero-desc">
+        探索灵动云的套餐与网络连接方案，按日常浏览、办公和流量需求选择合适的计划。这里整理套餐价格、订阅导入与 Clash 等客户端使用说明，帮助你完成从注册到连接的操作。
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn--ghost" href="#plans">查看套餐</a>
+        <ActionLink>立即注册</ActionLink>
+      </div>
+      <dl class="hero-facts">
+        {facts.map((f) => (
+          <div>
+            <dt>{f.v}</dt>
+            <dd>{f.k}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 520 420" width="520" height="420" role="presentation">
+        <defs>
+          <linearGradient id="h-cloud" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f1ecff" />
+            <stop offset="1" stop-color="#e6efff" />
+          </linearGradient>
+          <linearGradient id="h-line" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8b6cff" />
+            <stop offset="1" stop-color="#5b8cff" />
+          </linearGradient>
+          <linearGradient id="h-node" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#6a3df0" />
+            <stop offset="1" stop-color="#2f63e6" />
+          </linearGradient>
+        </defs>
+        <circle cx="270" cy="210" r="190" fill="#faf8ff" />
+        <circle cx="270" cy="210" r="140" fill="none" stroke="#ebe6fb" stroke-dasharray="3 7" />
+        <!-- main cloud -->
+        <path
+          d="M150 268h228a58 58 0 0 0 8-115.4A86 86 0 0 0 222 137a64 64 0 0 0-72 131Z"
+          fill="url(#h-cloud)"
+          stroke="#dcd3fb"
+          stroke-width="1.5"
+        />
+        <!-- connection paths -->
+        <g fill="none" stroke="url(#h-line)" stroke-width="2" stroke-linecap="round" class="flow">
+          <path d="M70 110 C 130 120, 160 160, 200 196" />
+          <path d="M455 96 C 410 120, 380 150, 344 186" />
+          <path d="M72 330 C 140 320, 170 290, 214 248" />
+          <path d="M460 320 C 410 310, 380 280, 330 244" />
+        </g>
+        <!-- endpoint nodes (devices) -->
+        <g>
+          <rect x="34" y="84" width="58" height="42" rx="9" fill="#fff" stroke="#d9d2f7" />
+          <rect x="42" y="92" width="42" height="22" rx="3" fill="#eef3ff" />
+          <rect x="430" y="72" width="40" height="56" rx="9" fill="#fff" stroke="#d9d2f7" />
+          <rect x="436" y="80" width="28" height="36" rx="3" fill="#f3efff" />
+          <rect x="38" y="306" width="64" height="44" rx="9" fill="#fff" stroke="#d9d2f7" />
+          <rect x="46" y="314" width="48" height="24" rx="3" fill="#f3efff" />
+          <rect x="440" y="296" width="44" height="50" rx="9" fill="#fff" stroke="#d9d2f7" />
+          <rect x="446" y="304" width="32" height="30" rx="3" fill="#eef3ff" />
+        </g>
+        <!-- core -->
+        <circle cx="272" cy="212" r="30" fill="#fff" stroke="#cfc4fa" stroke-width="1.5" />
+        <circle cx="272" cy="212" r="16" fill="url(#h-node)" />
+        <path d="M264 212h16M272 204v16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+        <circle cx="200" cy="196" r="6" fill="#8b6cff" />
+        <circle cx="344" cy="186" r="6" fill="#5b8cff" />
+        <circle cx="214" cy="248" r="6" fill="#5b8cff" />
+        <circle cx="330" cy="244" r="6" fill="#8b6cff" />
+        <!-- small clouds -->
+        <path d="M372 58h52a16 16 0 0 0 0-32 22 22 0 0 0-42 4 14 14 0 0 0-10 28Z" fill="#f2f6ff" stroke="#dde7fb" />
+        <path d="M96 210h40a12 12 0 0 0 0-24 17 17 0 0 0-32 3 11 11 0 0 0-8 21Z" fill="#f6f2ff" stroke="#e5ddfb" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding: clamp(40px, 7vw, 88px) 0 clamp(48px, 7vw, 80px);
+    background:
+      radial-gradient(600px 300px at 85% 10%, rgba(120, 140, 255, 0.08), transparent 70%),
+      radial-gradient(520px 280px at 5% 0%, rgba(140, 100, 255, 0.07), transparent 70%),
+      #fff;
+    overflow: hidden;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+  h1 {
+    font-size: clamp(36px, 5.6vw, 58px);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 14px;
+  }
+  .hero-sub {
+    font-size: clamp(18px, 2.2vw, 22px);
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero-desc {
+    max-width: 580px;
+    color: var(--text);
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 28px 0 32px;
+  }
+  .hero-facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    max-width: 600px;
+  }
+  .hero-facts div {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .hero-facts dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .hero-facts dd {
+    margin: 0;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .hero-art svg {
+    width: 100%;
+    height: auto;
+  }
+  .flow path {
+    stroke-dasharray: 6 8;
+    animation: flow 2.4s linear infinite;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -28;
+    }
+  }
+  @media (max-width: 899px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+    .hero-art {
+      order: -1;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+  }
+  @media (max-width: 560px) {
+    .hero-facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .hero-art {
+      max-width: 260px;
+    }
+    .hero-cta .btn {
+      flex: 1 1 140px;
+    }
+  }
+</style>
