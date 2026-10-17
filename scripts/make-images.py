@@ -23,10 +23,16 @@ with sync_playwright() as p:
     pg = b.new_page(viewport={"width": 1200, "height": 630})
     pg.set_content(og); pg.wait_for_timeout(200)
     pg.screenshot(path=str(pub / "og-default.png"))
-    for size, name in [(180, "apple-touch-icon.png"), (32, "favicon-32.png")]:
-        pg = b.new_page(viewport={"width": size, "height": size})
-        pg.set_content(f'<html><body style="margin:0">{logo.replace("<svg ", f"<svg width={size} height={size} ")}</body></html>')
-        pg.screenshot(path=str(pub / name), omit_background=True)
+    # favicon：圆角图标，透明背景
+    pg = b.new_page(viewport={"width": 32, "height": 32})
+    pg.set_content('<html style="background:transparent"><body style="margin:0;background:transparent">'
+                   + logo.replace("<svg ", '<svg width="32" height="32" ') + "</body></html>")
+    pg.screenshot(path=str(pub / "favicon-32.png"), omit_background=True)
+    # apple-touch-icon：满版正方形（iOS 自行裁圆角，不能留边或透明）
+    full = logo.replace('rx="11"', 'rx="0"').replace("<svg ", '<svg width="180" height="180" ')
+    pg = b.new_page(viewport={"width": 180, "height": 180})
+    pg.set_content('<html><body style="margin:0">' + full + "</body></html>")
+    pg.screenshot(path=str(pub / "apple-touch-icon.png"))
     b.close()
 
 # favicon.ico (PNG-in-ICO)
