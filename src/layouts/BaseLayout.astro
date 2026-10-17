@@ -14,6 +14,7 @@ interface Props {
   noindex?: boolean;
   publishedTime?: string;
   modifiedTime?: string;
+  keywords?: readonly string[];
 }
 
 const {
@@ -25,6 +26,7 @@ const {
   noindex = false,
   publishedTime,
   modifiedTime,
+  keywords,
 } = Astro.props;
 
 const canonical = abs(path);
@@ -37,6 +39,7 @@ const ogImage = abs(SITE.ogImage);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(',')} />}
     {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

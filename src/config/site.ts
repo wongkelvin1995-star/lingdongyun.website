@@ -11,13 +11,45 @@ export const SITE = {
   lang: 'zh-CN',
   locale: 'zh_CN',
   timezone: 'Asia/Shanghai',
-  defaultTitle: '灵动云官网｜套餐价格、订阅入口与客户端教程',
+  /** 英文 / 拼音名 */
+  latinName: 'Lingdongyun',
+  defaultTitle: '灵动云官网｜灵动云机场 · 灵动云VPN（Lingdongyun）套餐与教程',
   defaultDescription:
-    '灵动云官网提供月付、年付与一次性流量方案介绍，整理套餐价格、订阅导入和客户端使用教程，帮助你按预算与流量需求选择计划，并前往官方入口注册订购。',
+    '灵动云（Lingdongyun，又称灵动云机场、灵动云VPN）官网：月付、年付与一次性流量包共 8 档套餐价格，订阅导入与 Clash、小火箭客户端教程，官方注册入口。',
   ogImage: '/og-default.png',
   /** 套餐与页面资料的整理日期（显示在套餐区与页脚） */
   dataUpdated: '2026-10-17',
 } as const;
+
+/**
+ * 品牌名称与常见叫法 —— 品牌词 SEO 的唯一来源。
+ * 用于：首页「关于灵动云」品牌信息、结构化数据 alternateName、meta keywords、FAQ。
+ * 新增叫法只改这里。
+ */
+export const BRAND_ALIASES = [
+  '灵动云官网',
+  '灵动云机场',
+  '灵动云VPN',
+  '灵动云梯子',
+  '灵动云加速器',
+  'Lingdongyun',
+  'LingDongYun',
+] as const;
+
+/** 首页 meta keywords（百度等仍会参考；Google 忽略此标签） */
+export const BRAND_KEYWORDS = [
+  '灵动云',
+  '灵动云官网',
+  '灵动云机场',
+  '灵动云VPN',
+  '灵动云梯子',
+  '灵动云加速器',
+  '灵动云套餐',
+  '灵动云价格',
+  '灵动云订阅',
+  '灵动云客户端',
+  'lingdongyun',
+] as const;
 
 /** 唯一官方操作入口 */
 export const ACTION_URL = 'https://varnexa.lingdongaff.com/#/?code=HHoxxHGa';

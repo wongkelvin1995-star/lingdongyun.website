@@ -1,0 +1,113 @@
+---
+/**
+ * 「关于灵动云」品牌信息块：一段可直接引用的品牌定义 + 品牌事实表。
+ * 面向搜索引擎与生成式搜索（GEO），所有数据读取 site.ts / plans.ts。
+ */
+import { SITE, BRAND_ALIASES } from '../../config/site';
+import { PLANS } from '../../data/plans';
+
+const monthly = PLANS.filter((p) => p.paymentCycle === 'month');
+const yearly = PLANS.filter((p) => p.paymentCycle === 'year');
+const once = PLANS.filter((p) => p.paymentCycle === 'once');
+const minMonthly = Math.min(...monthly.map((p) => p.priceAmount));
+const aliases = BRAND_ALIASES.filter((a) => a !== '灵动云官网' && !/^[A-Za-z]/.test(a));
+
+const facts = [
+  { k: '品牌名称', v: `${SITE.brand}（${SITE.latinName}）` },
+  { k: '常见叫法', v: aliases.join('、') },
+  { k: '官方网站', v: 'lingdongyun.website' },
+  { k: '服务类型', v: '网络连接订阅服务（通过订阅链接向客户端提供节点）' },
+  {
+    k: '套餐',
+    v: `共 ${PLANS.length} 档：月付 ${monthly.length} 档（¥${minMonthly}/月起）、年付 ${yearly.length} 档、一次性流量包 ${once.length} 档`,
+  },
+  { k: '接入与协议', v: 'BGP 接入；Shadowsocks（SS）协议' },
+  { k: '适用设备', v: 'Windows、macOS、Android、iOS（配合 Clash、小火箭等客户端）' },
+];
+---
+<section class="brand-facts" id="about" aria-labelledby="about-title">
+  <div class="container bf-inner">
+    <div class="bf-copy">
+      <h2 id="about-title">关于灵动云（{SITE.latinName}）</h2>
+      <p class="bf-def">
+        <strong>灵动云</strong>（{SITE.latinName}）是一个提供网络连接订阅服务的品牌，用户也常称它为<strong>灵动云机场</strong>或<strong>灵动云VPN</strong>。灵动云官网 lingdongyun.website 介绍全部 {PLANS.length} 档套餐、订阅导入方法与客户端教程；注册与订购通过官网的官方入口完成。
+      </p>
+    </div>
+    <dl class="bf-table">
+      {facts.map((f) => (
+        <div class="bf-row">
+          <dt>{f.k}</dt>
+          <dd>{f.v}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .brand-facts {
+    padding: 8px 0 clamp(48px, 7vw, 72px);
+    background: #fff;
+  }
+  .bf-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 40px;
+    align-items: start;
+    border-top: 1px solid var(--line);
+    padding-top: clamp(32px, 5vw, 48px);
+  }
+  .bf-copy h2 {
+    font-size: clamp(22px, 2.6vw, 28px);
+    margin-bottom: 14px;
+    text-wrap: balance;
+  }
+  .bf-def {
+    color: var(--text);
+    max-width: 34em;
+  }
+  .bf-def strong {
+    color: var(--ink);
+  }
+  .bf-table {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .bf-row {
+    display: grid;
+    grid-template-columns: 7.5em minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px 16px;
+    font-size: 15px;
+  }
+  .bf-row + .bf-row {
+    border-top: 1px solid var(--line);
+  }
+  .bf-row:nth-child(odd) {
+    background: var(--surface);
+  }
+  dt {
+    color: var(--muted);
+    font-weight: 600;
+  }
+  dd {
+    margin: 0;
+    color: var(--ink);
+    min-width: 0;
+  }
+  @media (max-width: 899px) {
+    .bf-inner {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+  @media (max-width: 420px) {
+    .bf-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+</style>

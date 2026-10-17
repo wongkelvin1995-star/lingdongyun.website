@@ -104,5 +104,14 @@ const sm = readFileSync(join(DIST, 'sitemap.xml'), 'utf8');
 const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 ok(locs.length === EXPECTED_PAGES.length && EXPECTED_PAGES.every((p) => locs.includes(SITE + p)), `sitemap 精确列出 ${EXPECTED_PAGES.length} 个可索引页面`);
 
+// 7. 品牌词
+for (const kw of ['灵动云官网', '灵动云机场', '灵动云VPN', 'Lingdongyun']) {
+  ok(home.includes(kw), `首页可见内容/元信息含品牌词「${kw}」`);
+}
+ok(/<meta name="keywords" content="[^"]*lingdongyun/.test(home), '首页 meta keywords 含 lingdongyun');
+ok(/"alternateName":\[[^\]]*灵动云机场[^\]]*灵动云VPN/.test(home), 'Organization/WebSite alternateName 含品牌别名');
+ok(home.includes('id="about"'), '首页有「关于灵动云」品牌信息块');
+for (const p of EXPECTED_PAGES) ok(/<h1[^>]*>[^<]*灵动云/.test(html(p)), `H1 含品牌名 ${p}`);
+
 console.log(`\n${fails === 0 ? '全部通过' : `失败 ${fails} 项`}`);
 process.exit(fails ? 1 : 0);

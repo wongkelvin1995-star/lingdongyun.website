@@ -1,5 +1,5 @@
 ---
-title: Windows与Android客户端怎么选：v2rayN、v2rayNG与订阅格式
+title: 灵动云Windows与Android客户端怎么选：v2rayN、v2rayNG与订阅格式
 shortTitle: Windows 与 Android 客户端怎么选
 description: 对比 Windows 与 Android 上常见的 Clash 系客户端与 v2rayN、v2rayNG，说明如何核对订阅格式与协议支持、导入前的检查项，以及连接后如何验证。
 category: 客户端教程

@@ -1,5 +1,5 @@
 ---
-title: 小火箭Shadowrocket如何使用机场订阅：导入与节点选择
+title: 小火箭Shadowrocket导入灵动云订阅：导入步骤与节点选择
 shortTitle: 小火箭 Shadowrocket：导入订阅与选节点
 description: 介绍 iOS 客户端小火箭（Shadowrocket）与机场订阅的关系、获取应用的注意事项、导入灵动云订阅的步骤、节点选择方法和常见问题处理。
 category: 客户端教程

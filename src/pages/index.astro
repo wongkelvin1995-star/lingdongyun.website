@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/home/Hero.astro';
+import BrandFacts from '../components/home/BrandFacts.astro';
 import Services from '../components/home/Services.astro';
 import Plans from '../components/home/Plans.astro';
 import Clients from '../components/home/Clients.astro';
@@ -8,7 +9,7 @@ import Guides from '../components/home/Guides.astro';
 import Reviews from '../components/home/Reviews.astro';
 import Scenarios from '../components/home/Scenarios.astro';
 import Faq from '../components/home/Faq.astro';
-import { SITE, abs } from '../config/site';
+import { SITE, abs, BRAND_ALIASES, BRAND_KEYWORDS } from '../config/site';
 import { FAQS, stripHtml } from '../data/faq';
 
 const jsonLd = [
@@ -17,7 +18,7 @@ const jsonLd = [
     '@type': 'WebSite',
     '@id': abs('/#website'),
     name: SITE.name,
-    alternateName: SITE.brand,
+    alternateName: [SITE.brand, ...BRAND_ALIASES],
     url: abs('/'),
     inLanguage: SITE.lang,
     description: SITE.defaultDescription,
@@ -28,8 +29,10 @@ const jsonLd = [
     '@type': 'Organization',
     '@id': abs('/#organization'),
     name: SITE.brand,
+    alternateName: [...BRAND_ALIASES],
     url: abs('/'),
     logo: abs('/apple-touch-icon.png'),
+    description: `${SITE.brand}（${SITE.latinName}）是提供网络连接订阅服务的品牌，常被称为灵动云机场、灵动云VPN，提供月付、年付与一次性流量包套餐。`,
   },
   {
     '@context': 'https://schema.org',
@@ -44,8 +47,9 @@ const jsonLd = [
   },
 ];
 ---
-<BaseLayout jsonLd={jsonLd}>
+<BaseLayout jsonLd={jsonLd} keywords={BRAND_KEYWORDS}>
   <Hero />
+  <BrandFacts />
   <Services />
   <Plans />
   <Clients />

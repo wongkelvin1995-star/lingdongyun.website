@@ -7,7 +7,7 @@ import { SITE, abs } from '../../config/site';
 
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
 const title = `灵动云使用教程：套餐选择、订阅导入与排查（${guides.length} 篇）｜${SITE.name}`;
-const description = `灵动云使用教程目录，共 ${guides.length} 篇：套餐与流量选择、Clash 与小火箭订阅导入、Windows 与 Android 客户端、线路与协议概念、订阅更新失败与节点超时排查。`;
+const description = `灵动云（灵动云机场 · Lingdongyun）使用教程目录，共 ${guides.length} 篇：套餐与流量选择、Clash 与小火箭订阅导入、Windows 与 Android 客户端、线路与协议概念、订阅更新失败与节点超时排查。`;
 
 const jsonLd = [
   {

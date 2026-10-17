@@ -51,6 +51,8 @@ scripts/make-images.py    重新生成 OG 图与图标（需 Python playwright�
 未知 id 会让构建直接失败，避免发布错误价格。
 注意：`traffic-budget.md` 中的“折合约 8.25 元/月”和用量示例是手写的估算，改价后需人工复核；`scripts/verify-dist.mjs` 中的 `PLANS` 期望值也需同步。
 
+**品牌词 SEO（灵动云 / 灵动云机场 / 灵动云VPN / Lingdongyun）**：品牌别名集中在 `src/config/site.ts` 的 `BRAND_ALIASES`（结构化数据 alternateName、首页「关于灵动云」常见叫法）与 `BRAND_KEYWORDS`（首页 meta keywords）。首页 title/description 在同文件的 `defaultTitle` / `defaultDescription`。品牌信息块在 `src/components/home/BrandFacts.astro`，品牌 FAQ 在 `src/data/faq.ts` 前三题。新增别名时只改 site.ts，避免在正文里堆砌关键词。
+
 **修改首页文案**：Hero 在 `src/components/home/Hero.astro`；各区块在 `src/components/home/`；title/description 默认值在 `src/config/site.ts`。
 
 **新增文章**：在 `src/content/guides/` 新建 `<slug>.md`，复制现有文章的 frontmatter 并修改 `title / description / shortTitle / category / pubDate / order / related`。正文中站内链接使用完整路径（`/guides/xxx/`、`/#plans`）。保存后自动出现在首页教程区、/guides/ 目录与 sitemap。`draft: true` 的文章不会发布。

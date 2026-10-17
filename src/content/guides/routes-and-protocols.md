@@ -1,5 +1,5 @@
 ---
-title: 理解BGP、SS与专线：线路和代理协议分别说明什么
+title: 灵动云的BGP与SS是什么：线路、代理协议与专线的区别
 shortTitle: BGP、SS 与专线：线路和协议的区别
 description: 解释 BGP 接入、IPLC/IEPL 专线、中转与直连等线路概念，以及 Shadowsocks 等代理协议的作用，帮助你读懂套餐介绍里的技术名词，并理性看待“稳定”。
 category: 概念科普
