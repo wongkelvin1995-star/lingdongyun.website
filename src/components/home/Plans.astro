@@ -1,6 +1,5 @@
 ---
 import { PLANS, PLAN_GROUPS } from '../../data/plans';
-import { SITE } from '../../config/site';
 import PlanCard from './PlanCard.astro';
 ---
 <section class="section" id="plans" aria-labelledby="plans-title">
@@ -24,14 +23,6 @@ import PlanCard from './PlanCard.astro';
       {PLANS.map((p) => <PlanCard plan={p} />)}
     </div>
 
-    <div class="plan-notes">
-      <p>
-        价格与流量来自运营方提供的套餐资料（整理于 {SITE.dataUpdated}），尚未与在线结算页逐项核对；月付档位标注“起”，最终价格以结算页为准。
-      </p>
-      <p>
-        月度额度的重置日期、结转规则、设备数、速率与退款政策请在用户中心查看。1.5TB 按 1500GB 计。一次性流量包的有效期与使用规则以后台条款为准。
-      </p>
-    </div>
   </div>
 </section>
 
@@ -67,17 +58,6 @@ import PlanCard from './PlanCard.astro';
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 20px;
     row-gap: 34px;
-  }
-  .plan-notes {
-    margin-top: 32px;
-    padding: 18px 20px;
-    border-radius: 12px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    font-size: 14px;
-    color: var(--text);
-    display: grid;
-    gap: 6px;
   }
   @media (max-width: 1199px) {
     .plan-grid {

@@ -1,12 +1,11 @@
 ---
 /** 文章内的套餐对照表，读取 plans.ts 统一数据 */
 import { PLANS } from '../data/plans';
-import { SITE } from '../config/site';
 ---
 <figure class="plan-table">
   <div class="scroll" role="region" aria-label="灵动云套餐对照表" tabindex="0">
     <table>
-      <caption>灵动云 {PLANS.length} 档套餐对照（资料整理于 {SITE.dataUpdated}）</caption>
+      <caption>灵动云 {PLANS.length} 档套餐对照</caption>
       <thead>
         <tr>
           <th scope="col">套餐</th>
@@ -29,7 +28,7 @@ import { SITE } from '../config/site';
       </tbody>
     </table>
   </div>
-  <figcaption>月付价格标注“起”，最终以结算页为准；重置日、设备数等规则以用户中心为准。<a href="/#plans">在首页查看套餐卡片</a></figcaption>
+  <figcaption><a href="/#plans">在首页查看套餐卡片</a></figcaption>
 </figure>
 
 <style>
