@@ -61,7 +61,7 @@ for (const fp of allHtml) {
   ok(!/jichangshice|机场测试/.test(s), `${rel} 无旧站残留`);
   ok(!/AggregateRating|"@type":"Review"/.test(s), `${rel} 无评分/评论结构化数据`);
   ok((s.match(/<footer/g) || []).length === 1, `${rel} 恰好一个 footer`);
-  ok(s.includes('href="https://jichangreview.net/"') && s.includes('href="https://jichangguide.net/"'), `${rel} 两条资源链接存在`);
+  ok(!/jichangreview|jichangguide|资源链接/.test(s), `${rel} 无资源链接区`);
   ok((s.match(/<h1[\s>]/g) || []).length === 1, `${rel} 恰好一个 H1`);
   // 3. 站内链接可解析
   const internal = [...s.matchAll(/href="(\/[^"#]*)(#[^"]*)?"/g)].map((m) => m[1]);

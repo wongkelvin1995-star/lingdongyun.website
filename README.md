@@ -20,7 +20,7 @@ npm run preview     # 本地预览构建产物
 
 ```
 src/
-  config/site.ts          站点配置：域名、ACTION_URL、导航、资源链接、客服（待填）
+  config/site.ts          站点配置：域名、ACTION_URL、导航、客服（待填）
   data/plans.ts           8 档套餐唯一数据源 + 文本占位符替换
   data/faq.ts             常见问题（12 题）
   data/platforms.ts       客户端区四个平台内容与快速开始步骤

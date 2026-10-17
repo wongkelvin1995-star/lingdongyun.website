@@ -1,5 +1,5 @@
 ---
-import { NAV, RESOURCE_LINKS, SITE, CONTACTS } from '../config/site';
+import { NAV, SITE, CONTACTS } from '../config/site';
 import Logo from './Logo.astro';
 import ActionLink from './ActionLink.astro';
 
@@ -18,6 +18,8 @@ const year = new Date(SITE.dataUpdated).getFullYear();
         灵动云提供月付、年付与一次性流量包方案。注册、订购与订阅管理请通过官方入口完成。
       </p>
       <ActionLink variant="ghost" size="sm">前往官网</ActionLink>
+      {CONTACTS.telegram && <p><a href={CONTACTS.telegram} rel="noopener noreferrer" target="_blank">Telegram</a></p>}
+      {CONTACTS.email && <p>{CONTACTS.email}</p>}
     </div>
 
     <nav class="footer-col" aria-label="页脚导航">
@@ -37,16 +39,6 @@ const year = new Date(SITE.dataUpdated).getFullYear();
       </ul>
     </div>
 
-    <div class="footer-col">
-      <h2>资源链接</h2>
-      <ul>
-        {RESOURCE_LINKS.map((r) => (
-          <li><a href={r.href} target="_blank" rel="noopener noreferrer">{r.label}</a></li>
-        ))}
-      </ul>
-      {CONTACTS.telegram && <p><a href={CONTACTS.telegram} rel="noopener noreferrer" target="_blank">Telegram</a></p>}
-      {CONTACTS.email && <p><a href={`mailto:${CONTACTS.email}`}>{CONTACTS.email}</a></p>}
-    </div>
   </div>
 
   <div class="container footer-bottom">
@@ -67,7 +59,7 @@ const year = new Date(SITE.dataUpdated).getFullYear();
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr;
     gap: 32px;
   }
   .brand {

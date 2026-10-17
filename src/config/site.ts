@@ -36,12 +36,6 @@ export const CONTACTS: {
   support: null,
 };
 
-/** 页脚「资源链接」区（用户指定） */
-export const RESOURCE_LINKS = [
-  { label: '机场测评', href: 'https://jichangreview.net/' },
-  { label: '机场教程', href: 'https://jichangguide.net/' },
-] as const;
-
 /**
  * 主导航。href 以 "/#" 开头的项在首页会被转换为短锚点（#plans），
  * 在其他页面保持 /#plans，保证从文章页能回到首页对应区域。
