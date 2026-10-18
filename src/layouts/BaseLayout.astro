@@ -30,6 +30,8 @@ const {
 } = Astro.props;
 
 const canonical = abs(path);
+// 图标版本号：更换 Logo 后修改此值，强制浏览器重新下载标签页图标
+const ICON_V = '20261018';
 const ogImage = abs(SITE.ogImage);
 ---
 <!doctype html>
@@ -42,9 +44,9 @@ const ogImage = abs(SITE.ogImage);
     {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(',')} />}
     {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#ffffff" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href={`/favicon.svg?v=${ICON_V}`} type="image/svg+xml" />
+    <link rel="icon" href={`/favicon.ico?v=${ICON_V}`} sizes="32x32" />
+    <link rel="apple-touch-icon" href={`/apple-touch-icon.png?v=${ICON_V}`} />
 
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:locale" content={SITE.locale} />

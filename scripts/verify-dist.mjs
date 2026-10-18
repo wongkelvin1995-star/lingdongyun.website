@@ -64,7 +64,7 @@ for (const fp of allHtml) {
   ok(!/jichangreview|jichangguide|资源链接/.test(s), `${rel} 无资源链接区`);
   ok((s.match(/<h1[\s>]/g) || []).length === 1, `${rel} 恰好一个 H1`);
   // 3. 站内链接可解析
-  const internal = [...s.matchAll(/href="(\/[^"#]*)(#[^"]*)?"/g)].map((m) => m[1]);
+  const internal = [...s.matchAll(/href="(\/[^"#?]*)(\?[^"#]*)?(#[^"]*)?"/g)].map((m) => m[1]);
   const broken = internal.filter((h) => {
     if (/\.(svg|ico|png|css|js|xml|txt)$/.test(h)) return !existsSync(join(DIST, h));
     return !existsSync(join(DIST, h, 'index.html'));
