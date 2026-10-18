@@ -24,7 +24,7 @@ export const PLATFORMS: Platform[] = [
     intro:
       'Windows 上常见的是 Clash 系图形客户端与 v2rayN 一类客户端，它们支持的订阅格式和内核不同。先在用户中心确认推荐的客户端与订阅类型，再下载对应的正式版本。',
     steps: ['从用户中心或客户端官方发布页获取安装程序', '复制订阅链接并在客户端中添加订阅', '开启系统代理或按需使用规则模式'],
-    note: '安装包请从用户中心说明或客户端官方发布页获取，本站不提供下载文件。',
+    note: '安装包请按用户中心的指引，或从客户端项目的官方发布页获取。',
     guide: { href: '/guides/windows-android-clients/', label: '阅读 Windows 与 Android 客户端指南' },
   },
   {
@@ -51,7 +51,7 @@ export const PLATFORMS: Platform[] = [
     intro:
       'iOS 客户端多数需要使用非中国大陆地区的 Apple ID 在 App Store 购买或下载。小火箭（Shadowrocket）是较常见的一款，下面的教程以它为例说明导入步骤。',
     steps: ['在 App Store 获取客户端（部分为付费应用）', '复制订阅链接并在客户端中添加订阅', '允许添加 VPN 配置后连接'],
-    note: '以小火箭为例的教程仅说明操作方法，不代表所有套餐和订阅格式均已验证适配。',
+    note: '教程以小火箭为例演示导入步骤，灵动云推荐的 iOS 客户端可在用户中心查看。',
     guide: { href: '/guides/shadowrocket/', label: '阅读小火箭使用教程' },
   },
 ];

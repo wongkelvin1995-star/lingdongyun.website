@@ -29,7 +29,7 @@ with sync_playwright() as p:
                    + logo.replace("<svg ", '<svg width="32" height="32" ') + "</body></html>")
     pg.screenshot(path=str(pub / "favicon-32.png"), omit_background=True)
     # apple-touch-icon：满版正方形（iOS 自行裁圆角，不能留边或透明）
-    full = logo.replace('rx="11"', 'rx="0"').replace("<svg ", '<svg width="180" height="180" ')
+    full = logo.replace('rx="9"', 'rx="0"').replace("<svg ", '<svg width="180" height="180" ')
     pg = b.new_page(viewport={"width": 180, "height": 180})
     pg.set_content('<html><body style="margin:0">' + full + "</body></html>")
     pg.screenshot(path=str(pub / "apple-touch-icon.png"))

@@ -19,7 +19,7 @@ related: [clash-subscription, network-basics, troubleshooting]
 
 **v2rayN 与 v2rayNG** 分别运行在 Windows 和 Android 上，通常读取通用订阅（多为 Base64 编码的节点列表），界面以节点列表为主，上手直观。它们可以使用 Xray 等内核，支持 Shadowsocks、VMess、VLESS、Trojan 等多种协议。
 
-灵动云资料提及支持 Shadowsocks（SS）协议。SS 在上述两类客户端中都有支持，但“支持某个协议”和“能直接导入某种订阅格式”是两回事：如果给 Clash 客户端导入了通用格式的订阅，或反过来，都可能解析失败。
+灵动云使用 Shadowsocks（SS）协议。SS 在上述两类客户端中都有支持，但“支持某个协议”和“能直接导入某种订阅格式”是两回事：如果给 Clash 客户端导入了通用格式的订阅，或反过来，都可能解析失败。
 
 ## 怎样核对订阅格式
 

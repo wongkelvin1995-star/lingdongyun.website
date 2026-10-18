@@ -86,7 +86,7 @@ export const PLANS: Plan[] = [
     paymentLabel: '按月付费',
     displayTraffic: '300GB/月',
     trafficLabel: '每月额度',
-    tag: '编辑建议 · 日常之选',
+    tag: '推荐 · 日常之选',
     highlight: true,
     summary: '日常浏览加适量视频，单人多设备的常见用量。',
     features: ['月付，可按月续费', '每月 300GB 流量额度', '为视频与更新下载留出余量'],
