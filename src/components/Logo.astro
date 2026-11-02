@@ -1,29 +1,33 @@
 ---
 /**
- * 灵动云 Logo（静态）：紫色圆角方块 + 白色星形，斜向光带切过星形下部。
- * 同一页面出现多次时传入不同 gid，避免渐变 id 冲突。
- * 修改图形时同步更新 public/favicon.svg，并运行 python3 scripts/make-images.py 重新生成 PNG 图标。
+ * 灵动云 Logo —— 全站唯一来源：public/brand/logo.svg（官方 Logo，2026-11-01）。
+ * 页眉、页脚、404 等所有出现 Logo 的地方都用这个组件；更换 Logo 时只替换这一个文件，
+ * 并同步 public/favicon.svg（同一文件）、favicon.ico、apple-touch-icon.png，
+ * 再修改 BaseLayout.astro 里的 ICON_V 让浏览器刷新标签页图标。
+ * 文字「灵动云」与角色标签由调用方紧跟在 Logo 后面输出，因此这里 alt 为空。
  */
 interface Props {
   size?: number;
-  gid?: string;
+  /** 首屏以外（如页脚）可延迟加载 */
+  lazy?: boolean;
+  class?: string;
 }
-const { size = 34, gid = 'lg-logo' } = Astro.props;
+const { size = 32, lazy = false, class: cls } = Astro.props;
 ---
-<svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-  <defs>
-    <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#7038F7" />
-      <stop offset="1" stop-color="#5A24EA" />
-    </linearGradient>
-  </defs>
-  <rect width="40" height="40" rx="9" fill={`url(#${gid})`} />
-  <polygon
-    points="14.26,10.45 20.52,13.10 26.95,10.89 26.36,17.66 30.45,23.09 23.82,24.62 19.92,30.19 16.42,24.36 9.92,22.38 14.38,17.25"
-    fill="#fff"
-    stroke="#fff"
-    stroke-width="2.2"
-    stroke-linejoin="round"
-  />
-  <path d="M9 29.5 L32 16.5" stroke={`url(#${gid})`} stroke-width="1.6" stroke-linecap="round" fill="none" />
-</svg>
+<img
+  class:list={['logo', cls]}
+  src="/brand/logo.svg"
+  width={size}
+  height={size}
+  alt=""
+  decoding="async"
+  loading={lazy ? 'lazy' : undefined}
+/>
+
+<style>
+  .logo {
+    flex: none;
+    border-radius: 20%;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 6px 18px -6px rgba(98, 3, 251, 0.55);
+  }
+</style>

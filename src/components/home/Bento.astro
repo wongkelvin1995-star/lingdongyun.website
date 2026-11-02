@@ -1,0 +1,621 @@
+---
+/**
+ * 首页「灵动云订阅的六个特点」便当格（v3 新增）。
+ * 文字只来自 SPEC §2 的事实与本站已有内容（FAQ、教程正文），不加数字承诺；
+ * 每一格都链接到讲解这一点的教程章节（锚点均为文章里已有的 H2）。
+ * 图形部分是装饰（aria-hidden），信息以每格的标题和说明为准。
+ * 顺序即阅读顺序：大格在左，右侧两行，最后一行横跨。
+ */
+import { DEVICES } from '../../data/devices';
+
+interface Tile {
+  key: 'clients' | 'support' | 'devices' | 'reset' | 'rate' | 'lines';
+  title: string;
+  text: string;
+  href: string;
+  /** 链接落点：教程名 + 章节名（均为站内已有文字） */
+  guide: string;
+  section?: string;
+}
+
+const tiles: Tile[] = [
+  {
+    key: 'clients',
+    title: '全平台客户端教程',
+    text: 'Windows、macOS、Android、iPhone / iPad 都有对应的客户端与分步教程，先按设备选好客户端再导入。',
+    href: '/guides/choose-client/',
+    guide: '按设备选客户端',
+  },
+  {
+    key: 'support',
+    title: '客服领取对应订阅',
+    text: '说明设备和客户端，客服发来对应的订阅链接：Clash 订阅、通用订阅或小火箭订阅。',
+    href: '/guides/windows-android-clients/#先分清两种订阅格式',
+    guide: 'v2rayN / v2rayNG 教程',
+    section: '先分清两种订阅格式',
+  },
+  {
+    key: 'devices',
+    title: '一个订阅，多台设备',
+    text: '不限设备数量，电脑、手机和平板可以分别导入同一个账号的订阅。',
+    href: '/guides/choose-client/#多台设备一起用要注意什么',
+    guide: '按设备选客户端',
+    section: '多台设备一起用要注意什么',
+  },
+  {
+    key: 'reset',
+    title: '订阅链接可重置',
+    text: '链接泄露后可以重置，旧链接随之失效，再向客服领取新链接。',
+    href: '/guides/clash-party/#保护好订阅链接',
+    guide: 'Clash Party 教程',
+    section: '保护好订阅链接',
+  },
+  {
+    key: 'rate',
+    title: '1.0 倍率，不限速',
+    text: '所有套餐均按 1.0 倍率计费，不限速。',
+    href: '/guides/clash-subscription/#第四步测速并选择节点',
+    guide: 'Clash 订阅导入',
+    section: '测速并选择节点',
+  },
+  {
+    key: 'lines',
+    title: 'IEPL / IPLC 优化线路',
+    text: '节点覆盖香港、台湾、日本、新加坡、美国等地区，访问有地区要求的服务时选对应地区的节点。',
+    href: '/guides/network-basics/#节点实际转发数据的服务器',
+    guide: '客户端、订阅链接和节点',
+    section: '节点',
+  },
+];
+
+/** 平台 → 常用客户端：直接读取 devices.ts，与「按设备选教程」保持一致 */
+const platforms = DEVICES.map((d) => ({ name: d.label, icon: d.icon, clients: d.clients.split('、') }));
+const linkTypes = [
+  { type: 'Clash 订阅', to: ['Clash Party', 'Clash Verge Rev'] },
+  { type: '通用订阅', to: ['v2rayN', 'v2rayNG'] },
+  { type: '小火箭订阅', to: ['Shadowrocket'] },
+];
+const regions = ['HK', 'TW', 'JP', 'SG', 'US'];
+---
+<section class="section bento-section" id="features" aria-labelledby="features-title">
+  <div class="container">
+    <div class="bento-head">
+      <p class="bento-title" id="features-title">灵动云订阅的六个特点</p>
+      <p class="bento-sub">每一项都附有对应的教程章节，点开即可查看具体做法。</p>
+    </div>
+
+    <ul class="bento">
+      {tiles.map((t) => (
+        <li class:list={['tile', `t-${t.key}`]}>
+          <div class="t-visual" aria-hidden="true">
+            {t.key === 'clients' && (
+              <div class="v-matrix">
+                {platforms.map((p) => (
+                  <div class="v-row">
+                    <span class="v-plat-icon">
+                      <svg viewBox="0 0 24 24" width="20" height="20"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </span>
+                    <span class="v-plat-name">{p.name}</span>
+                    <span class="v-chips">{p.clients.map((c) => <span>{c}</span>)}</span>
+                    <span class="v-proto">SS</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {t.key === 'support' && (
+              <div class="v-links">
+                {linkTypes.map((l) => (
+                  <div class="v-link-row">
+                    <span class="v-link-type">{l.type}</span>
+                    <span class="v-link-line"></span>
+                    <span class="v-link-to">{l.to.map((c) => <span>{c}</span>)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {t.key === 'devices' && (
+              <svg class="v-fan" viewBox="0 0 240 96" width="240" height="96">
+                <g fill="none" stroke="currentColor" stroke-width="1.2" class="fan-lines">
+                  <path d="M70 48 C 120 48, 130 14, 182 14" />
+                  <path d="M70 48 C 120 48, 130 37, 182 37" />
+                  <path d="M70 48 C 120 48, 130 59, 182 59" />
+                  <path d="M70 48 C 120 48, 130 82, 182 82" />
+                </g>
+                <rect x="6" y="34" width="64" height="28" rx="7" class="fan-src" />
+                <text x="38" y="52.5" text-anchor="middle" class="fan-src-t">订阅</text>
+                <g class="fan-dev" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M188 7h22v14h-22zM195 25h8M199 21v4" />
+                  <path d="M190 30h18v12h-18zM186.5 45h25" />
+                  <rect x="193" y="50" width="11" height="18" rx="2.5" />
+                  <rect x="190" y="72" width="17" height="21" rx="2.5" />
+                </g>
+                <g class="fan-dots">
+                  <circle cx="182" cy="14" r="2.2" />
+                  <circle cx="182" cy="37" r="2.2" />
+                  <circle cx="182" cy="59" r="2.2" />
+                  <circle cx="182" cy="82" r="2.2" />
+                </g>
+              </svg>
+            )}
+            {t.key === 'reset' && (
+              <div class="v-reset">
+                <span class="v-tok v-tok--old">token=••••••••</span>
+                <span class="v-reset-ic">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </span>
+                <span class="v-tok v-tok--new">token=••••••••</span>
+              </div>
+            )}
+            {t.key === 'rate' && (
+              <div class="v-rate"><span class="v-rate-n">1.0</span><span class="v-rate-x">×</span></div>
+            )}
+            {t.key === 'lines' && (
+              <svg class="v-routes" viewBox="0 0 400 124" width="400" height="124">
+                <g fill="none" stroke-width="1.2" class="route-lines">
+                  {regions.map((_, i) => <path d={`M22 62 C 150 62, 180 ${14 + i * 24}, 318 ${14 + i * 24}`} />)}
+                </g>
+                <circle cx="22" cy="62" r="10" class="route-halo" />
+                <circle cx="22" cy="62" r="5" class="route-src" />
+                {regions.map((r, i) => (
+                  <g>
+                    <circle cx="318" cy={14 + i * 24} r="2.6" class="route-dot" />
+                    <text x="332" y={18 + i * 24} class="route-t">{r}</text>
+                  </g>
+                ))}
+              </svg>
+            )}
+          </div>
+          <div class="t-copy">
+            <p class="t-title"><a href={t.href}>{t.title}</a></p>
+            <p class="t-text">{t.text}</p>
+          </div>
+          <p class="t-foot">
+            <span>{t.guide}</span>
+            {t.section && (
+              <>
+                <svg class="t-chev" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>{t.section}</span>
+              </>
+            )}
+            <svg class="t-arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bento-section {
+    padding-top: clamp(24px, 3vw, 40px);
+  }
+  .bento-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 32px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .bento-title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.005em;
+  }
+  .bento-sub {
+    font-size: 14.5px;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .bento {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: minmax(236px, auto);
+    gap: 12px;
+  }
+  .t-clients {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+  }
+  .t-support {
+    grid-column: 3 / 5;
+  }
+  .t-lines {
+    grid-column: 2 / 5;
+  }
+  .tile.t-lines {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      'copy visual'
+      'foot visual';
+    column-gap: 40px;
+  }
+  .t-lines .t-visual {
+    grid-area: visual;
+  }
+  .t-lines .t-copy {
+    grid-area: copy;
+    align-self: end;
+  }
+  .t-lines .t-foot {
+    grid-area: foot;
+  }
+
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    padding: 24px;
+    border-radius: var(--r);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 140px), var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--lift);
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  /* 悬停：顶部亮起一片青色微光 */
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(420px 220px at 50% -10%, rgba(206, 181, 249, 0.14), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .tile:hover,
+  .tile:focus-within {
+    border-color: rgba(206, 181, 249, 0.34);
+    box-shadow: var(--lift), var(--glow);
+  }
+  .tile:hover::before,
+  .tile:focus-within::before {
+    opacity: 1;
+  }
+  .t-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-height: 92px;
+    color: var(--muted);
+  }
+  .t-copy {
+    display: grid;
+    gap: 6px;
+  }
+  .t-title {
+    font-size: var(--fs-md);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .t-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .t-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .t-title a:focus-visible {
+    outline: none;
+  }
+  .t-title a:focus-visible::after {
+    outline: 2px solid var(--accent-hi);
+    outline-offset: -2px;
+  }
+  .t-text {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.75;
+    text-wrap: pretty;
+  }
+  .t-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--dim);
+    line-height: 1.5;
+  }
+  .t-chev {
+    color: var(--dim);
+    opacity: 0.8;
+  }
+  .t-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .tile:hover .t-foot,
+  .tile:focus-within .t-foot {
+    color: var(--text-2);
+  }
+  .tile:hover .t-arrow,
+  .tile:focus-within .t-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* —— 各格图形 —— */
+  /* 平台 → 客户端兼容表：在大格里撑满可用高度 */
+  .t-clients .t-visual {
+    align-items: stretch;
+  }
+  .v-matrix {
+    width: 100%;
+    display: grid;
+    grid-auto-rows: 1fr;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    background: var(--well);
+  }
+  .v-row {
+    display: grid;
+    grid-template-columns: 40px 112px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+  }
+  .v-row + .v-row {
+    border-top: 1px solid var(--line);
+  }
+  .v-plat-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--accent);
+    background: radial-gradient(circle at 50% 30%, rgba(206, 181, 249, 0.16), rgba(206, 181, 249, 0.02) 70%);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.25);
+  }
+  .v-plat-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .v-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .v-chips span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-2);
+    padding: 3px 9px;
+    border-radius: var(--r-xs);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+  }
+  .v-proto {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #cab4f0;
+    padding: 1px 7px;
+    border-radius: 5px;
+    background: rgba(182, 147, 243, 0.12);
+    border: 1px solid rgba(182, 147, 243, 0.3);
+  }
+  .v-links {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .v-link-row {
+    display: grid;
+    grid-template-columns: auto minmax(24px, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+  }
+  .v-link-type {
+    padding: 4px 10px;
+    border-radius: var(--r-xs);
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(206, 181, 249, 0.25);
+    white-space: nowrap;
+  }
+  .v-link-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(206, 181, 249, 0.5), rgba(255, 255, 255, 0.12));
+  }
+  .v-link-to {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 2px 14px;
+    color: var(--text-2);
+  }
+  .v-link-to span {
+    white-space: nowrap;
+  }
+  .v-fan {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    color: rgba(206, 181, 249, 0.45);
+  }
+  .fan-src {
+    fill: rgba(206, 181, 249, 0.1);
+    stroke: rgba(206, 181, 249, 0.45);
+  }
+  .fan-src-t {
+    fill: var(--accent);
+    font-size: 12px;
+    font-family: var(--font);
+  }
+  .fan-dev {
+    stroke: var(--text-2);
+  }
+  .fan-dots {
+    fill: var(--accent);
+  }
+  .v-reset {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .v-tok {
+    padding: 4px 10px;
+    border-radius: var(--r-xs);
+    border: 1px solid var(--line-strong);
+    background: var(--well);
+    letter-spacing: 0.02em;
+  }
+  .v-tok--old {
+    color: var(--dim);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+  }
+  .v-tok--new {
+    color: var(--accent);
+    border-color: rgba(206, 181, 249, 0.35);
+    box-shadow: 0 0 18px -6px rgba(206, 181, 249, 0.6);
+  }
+  .v-reset-ic {
+    color: var(--accent-2);
+    padding-left: 10px;
+  }
+  .v-rate {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--mono);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .v-rate-n {
+    font-size: 64px;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ece2fe, #ceb5f9 60%, #b693f3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .v-rate-x {
+    font-size: 36px;
+    color: var(--accent-2);
+  }
+  .v-routes {
+    width: 100%;
+    max-width: 440px;
+    height: auto;
+    margin-inline: auto;
+  }
+  .route-halo {
+    fill: rgba(206, 181, 249, 0.12);
+    stroke: rgba(206, 181, 249, 0.3);
+  }
+  .route-lines path {
+    stroke: rgba(206, 181, 249, 0.35);
+  }
+  .route-src {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 6px rgba(206, 181, 249, 0.9));
+  }
+  .route-dot {
+    fill: var(--accent-2);
+  }
+  .route-t {
+    fill: var(--text-2);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  @media (max-width: 1023px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+    }
+    .t-clients,
+    .t-support {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    /* 平板：线路格与「1.0 倍率」并排，改为上下排列 */
+    .t-lines {
+      grid-column: auto;
+    }
+    .tile.t-lines {
+      display: flex;
+    }
+    .t-lines .t-copy {
+      align-self: stretch;
+    }
+  }
+  @media (max-width: 639px) {
+    .bento {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tile {
+      padding: 20px;
+    }
+    .t-visual {
+      min-height: 0;
+    }
+    .v-matrix {
+      grid-auto-rows: auto;
+    }
+    .v-row {
+      align-content: start;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      grid-template-areas:
+        'icon name proto'
+        'icon chips chips';
+      gap: 8px 12px;
+      padding: 14px;
+    }
+    .v-plat-icon {
+      grid-area: icon;
+      align-self: start;
+      width: 36px;
+      height: 36px;
+    }
+    .v-plat-name {
+      grid-area: name;
+    }
+    .v-chips {
+      grid-area: chips;
+    }
+    .v-proto {
+      grid-area: proto;
+    }
+    .v-link-row {
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 10px;
+    }
+    .v-link-type {
+      justify-self: start;
+    }
+    .v-link-line {
+      display: none;
+    }
+    .v-link-to {
+      justify-content: flex-start;
+    }
+  }
+</style>

@@ -1,4 +1,8 @@
 ---
+/**
+ * 教程条目。variant="row"：首页「全部教程」的文档目录行；variant="card"：文末「相关教程」卡片。
+ * 两种外观共用同一份结构与文字。
+ */
 interface Props {
   slug: string;
   title: string;
@@ -7,12 +11,13 @@ interface Props {
   category: string;
   date: Date;
   headingLevel?: 'h2' | 'h3';
+  variant?: 'row' | 'card';
 }
-const { slug, shortTitle, description, category, date, headingLevel = 'h3' } = Astro.props;
+const { slug, shortTitle, description, category, date, headingLevel = 'h3', variant = 'card' } = Astro.props;
 const H = headingLevel;
 const iso = date.toISOString().slice(0, 10);
 ---
-<article class="guide-card">
+<article class:list={['guide-card', `guide-card--${variant}`]}>
   <p class="g-cat">{category}</p>
   <H class="g-title"><a href={`/guides/${slug}/`}>{shortTitle}</a></H>
   <p class="g-desc">{description}</p>
@@ -22,66 +27,155 @@ const iso = date.toISOString().slice(0, 10);
 <style>
   .guide-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
     min-width: 0;
-  }
-  .guide-card:hover,
-  .guide-card:focus-within {
-    border-color: #cbbdf8;
-    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .g-cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 12.5px;
-    font-weight: 600;
-    color: var(--brand-ink);
-    background: var(--tint);
-    align-self: flex-start;
-    padding: 2px 10px;
-    border-radius: 999px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
+  .g-cat::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: currentColor;
   }
   .g-title {
     font-size: 17px;
-    line-height: 1.45;
+    font-weight: 600;
+    line-height: 1.5;
+    text-wrap: pretty;
   }
   .g-title a {
-    color: var(--ink);
+    color: var(--text);
     text-decoration: none;
   }
   .g-title a::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 14px;
+    z-index: 1;
+    border-radius: inherit;
   }
   .g-title a:focus-visible {
     outline: none;
   }
   .g-title a:focus-visible::after {
-    outline: 3px solid #8b6cff;
-    outline-offset: 2px;
+    outline: 2px solid var(--accent-hi);
+    outline-offset: -2px;
   }
   .g-desc {
-    font-size: 14.5px;
+    font-size: 14px;
     color: var(--muted);
-    line-height: 1.65;
-    flex: 1;
+    line-height: 1.75;
+    text-wrap: pretty;
   }
   .g-meta {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
-    color: var(--muted);
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+    color: var(--dim);
   }
   .g-meta span {
-    color: var(--brand-ink);
-    font-weight: 600;
+    color: var(--muted);
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  .guide-card:hover .g-title a,
+  .guide-card:focus-within .g-title a {
+    color: var(--accent-hi);
+  }
+  .guide-card:hover .g-meta span,
+  .guide-card:focus-within .g-meta span {
+    color: var(--accent);
+  }
+
+  /* 目录行：左侧分类，中间标题与简介，右侧日期 */
+  .guide-card--row {
+    display: grid;
+    align-content: start;
+    grid-template-columns: 128px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'cat title meta'
+      'cat desc meta';
+    column-gap: 32px;
+    row-gap: 4px;
+    padding: 22px 24px 22px 20px;
+    border-radius: 0;
+  }
+  .guide-card--row .g-cat {
+    grid-area: cat;
+    align-self: start;
+    padding-top: 4px;
+  }
+  .guide-card--row .g-title {
+    grid-area: title;
+  }
+  .guide-card--row .g-desc {
+    grid-area: desc;
+    max-width: 46em;
+  }
+  .guide-card--row .g-meta {
+    grid-area: meta;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 8px;
+    padding-top: 3px;
+  }
+  .guide-card--row:hover,
+  .guide-card--row:focus-within {
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
+  /* 卡片：相关教程 */
+  .guide-card--card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px;
+    border-radius: var(--r);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 120px), var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--lift);
+  }
+  .guide-card--card .g-desc {
+    flex: 1;
+  }
+  .guide-card--card:hover,
+  .guide-card--card:focus-within {
+    border-color: rgba(206, 181, 249, 0.32);
+    box-shadow: var(--lift), var(--glow);
+  }
+
+  @media (max-width: 639px) {
+    .guide-card--row {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'cat'
+        'title'
+        'desc'
+        'meta';
+      row-gap: 6px;
+      padding: 18px 4px 18px 14px;
+    }
+    .guide-card--row .g-cat {
+      padding-top: 0;
+    }
+    .guide-card--row .g-meta {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 4px;
+    }
   }
 </style>

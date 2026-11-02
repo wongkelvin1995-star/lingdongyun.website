@@ -1,96 +1,86 @@
 ---
-import ActionLink from '../ActionLink.astro';
-import { PLANS } from '../../data/plans';
-
-const monthly = PLANS.filter((p) => p.paymentCycle === 'month');
-const yearly = PLANS.filter((p) => p.paymentCycle === 'year');
-const once = PLANS.filter((p) => p.paymentCycle === 'once');
-const minPrice = (list: typeof PLANS) => Math.min(...list.map((p) => p.priceAmount));
-const facts = [
-  { k: `${PLANS.length} 档`, v: '套餐可选' },
-  { k: `¥${minPrice(monthly)} 起`, v: `月付 · ${monthly.length} 档` },
-  { k: `¥${minPrice(yearly)}/年`, v: '年付 · 每月发放' },
-  { k: `${once.length} 档`, v: '一次性流量包' },
+/**
+ * 首页首屏：说明本站做什么（按设备找教程），主操作是选择设备，次操作直达 Clash 订阅导入。
+ * 右侧是纯装饰的「订阅控制台」：遮罩后的订阅链接 → 导入 → 规则模式与节点列表，
+ * 用来呼应本站的主题（订阅导入）。整块 aria-hidden，不含任何延迟、速度等数字。
+ * 节点地区只用 SPEC §2 列出的地区；协议为 SS。
+ */
+const quick = [
+  { device: 'Windows · macOS', client: 'Clash Party', href: '/guides/clash-party/' },
+  { device: 'Android', client: 'v2rayNG', href: '/guides/windows-android-clients/' },
+  { device: 'iPhone · iPad', client: '小火箭', href: '/guides/shadowrocket/' },
+  { device: '还没装客户端', client: '按设备选择', href: '/guides/choose-client/' },
 ];
+const nodes = ['香港', '台湾', '日本', '新加坡', '美国'];
 ---
 <section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="container hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow">Lingdongyun · 灵动云机场</p>
-      <h1 id="hero-title">灵动云官网</h1>
-      <p class="hero-sub">灵动云机场 · 灵动云VPN 官方网站：月付、年付与不限时流量包，按预算和用量选择。</p>
+      <p class="hero-eyebrow">Lingdongyun · 使用指南</p>
+      <h1 id="hero-title">灵动云使用指南</h1>
+      <p class="hero-sub">按设备找教程：安装客户端、导入订阅、选节点连接。</p>
       <p class="hero-desc">
-        探索灵动云的套餐与网络连接方案，按日常浏览、办公和流量需求选择合适的计划。这里整理套餐价格、订阅导入与 Clash 等客户端使用说明，帮助你完成从注册到连接的操作。
+        这里是灵动云官方的使用指南，按 Windows、macOS、Android 和 iPhone / iPad 整理客户端安装、订阅导入、节点切换与常用设置的分步教程。先选你的设备，再打开对应教程；已经装好 Clash 的，可以直接看订阅导入。
       </p>
       <div class="hero-cta">
-        <a class="btn btn--ghost" href="#plans">查看套餐</a>
-        <ActionLink>立即注册</ActionLink>
+        <a class="btn btn--primary" href="#devices">选择设备</a>
+        <a class="btn btn--ghost" href="/guides/clash-subscription/">Clash 订阅导入</a>
       </div>
-      <dl class="hero-facts">
-        {facts.map((f) => (
-          <div>
-            <dt>{f.v}</dt>
-            <dd>{f.k}</dd>
-          </div>
+      <ul class="hero-quick" aria-label="常用教程快速入口">
+        {quick.map((q) => (
+          <li>
+            <a href={q.href}>
+              <span class="q-device">{q.device}</span>
+              <span class="q-client">{q.client}<span class="q-arrow" aria-hidden="true"> →</span></span>
+            </a>
+          </li>
         ))}
-      </dl>
+      </ul>
     </div>
 
     <div class="hero-art" aria-hidden="true">
-      <svg viewBox="0 0 520 420" width="520" height="420" role="presentation">
-        <defs>
-          <linearGradient id="h-cloud" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f1ecff" />
-            <stop offset="1" stop-color="#e6efff" />
-          </linearGradient>
-          <linearGradient id="h-line" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#8b6cff" />
-            <stop offset="1" stop-color="#5b8cff" />
-          </linearGradient>
-          <linearGradient id="h-node" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#6a3df0" />
-            <stop offset="1" stop-color="#2f63e6" />
-          </linearGradient>
-        </defs>
-        <circle cx="270" cy="210" r="190" fill="#faf8ff" />
-        <circle cx="270" cy="210" r="140" fill="none" stroke="#ebe6fb" stroke-dasharray="3 7" />
-        <!-- main cloud -->
-        <path
-          d="M150 268h228a58 58 0 0 0 8-115.4A86 86 0 0 0 222 137a64 64 0 0 0-72 131Z"
-          fill="url(#h-cloud)"
-          stroke="#dcd3fb"
-          stroke-width="1.5"
-        />
-        <!-- connection paths -->
-        <g fill="none" stroke="url(#h-line)" stroke-width="2" stroke-linecap="round" class="flow">
-          <path d="M70 110 C 130 120, 160 160, 200 196" />
-          <path d="M455 96 C 410 120, 380 150, 344 186" />
-          <path d="M72 330 C 140 320, 170 290, 214 248" />
-          <path d="M460 320 C 410 310, 380 280, 330 244" />
-        </g>
-        <!-- endpoint nodes (devices) -->
-        <g>
-          <rect x="34" y="84" width="58" height="42" rx="9" fill="#fff" stroke="#d9d2f7" />
-          <rect x="42" y="92" width="42" height="22" rx="3" fill="#eef3ff" />
-          <rect x="430" y="72" width="40" height="56" rx="9" fill="#fff" stroke="#d9d2f7" />
-          <rect x="436" y="80" width="28" height="36" rx="3" fill="#f3efff" />
-          <rect x="38" y="306" width="64" height="44" rx="9" fill="#fff" stroke="#d9d2f7" />
-          <rect x="46" y="314" width="48" height="24" rx="3" fill="#f3efff" />
-          <rect x="440" y="296" width="44" height="50" rx="9" fill="#fff" stroke="#d9d2f7" />
-          <rect x="446" y="304" width="32" height="30" rx="3" fill="#eef3ff" />
-        </g>
-        <!-- core -->
-        <circle cx="272" cy="212" r="30" fill="#fff" stroke="#cfc4fa" stroke-width="1.5" />
-        <circle cx="272" cy="212" r="16" fill="url(#h-node)" />
-        <path d="M264 212h16M272 204v16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
-        <circle cx="200" cy="196" r="6" fill="#8b6cff" />
-        <circle cx="344" cy="186" r="6" fill="#5b8cff" />
-        <circle cx="214" cy="248" r="6" fill="#5b8cff" />
-        <circle cx="330" cy="244" r="6" fill="#8b6cff" />
-        <!-- small clouds -->
-        <path d="M372 58h52a16 16 0 0 0 0-32 22 22 0 0 0-42 4 14 14 0 0 0-10 28Z" fill="#f2f6ff" stroke="#dde7fb" />
-        <path d="M96 210h40a12 12 0 0 0 0-24 17 17 0 0 0-32 3 11 11 0 0 0-8 21Z" fill="#f6f2ff" stroke="#e5ddfb" />
-      </svg>
+      <div class="console">
+        <div class="c-bar">
+          <span class="c-dots"><i></i><i></i><i></i></span>
+          <span class="c-title">Clash Party<span class="c-sep">/</span>订阅管理</span>
+        </div>
+        <div class="c-body">
+          <div class="c-row-label"><span>订阅链接</span><span class="c-hint">令牌已遮挡</span></div>
+          <div class="c-field">
+            <span class="c-url"><span class="u-scheme">https://</span><span class="u-mask">••••••••</span><span class="u-path">/sub?token=</span><span class="u-token">••••••••••</span><span class="c-caret"></span></span>
+            <span class="c-btn">导入</span>
+          </div>
+
+          <div class="c-profile">
+            <span class="p-check">
+              <svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <span class="p-name">灵动云</span>
+            <span class="p-tag">Clash</span>
+            <span class="p-meta">已更新</span>
+          </div>
+
+          <div class="c-list-head">
+            <span>节点</span>
+            <span class="c-modes"><span class="is-on">规则</span><span>全局</span><span>直连</span></span>
+          </div>
+          <ul class="c-nodes">
+            {nodes.map((n, i) => (
+              <li class:list={[{ 'is-on': i === 0 }]}>
+                <span class="n-dot"></span>
+                <span class="n-name">{n}</span>
+                <span class="n-proto">SS</span>
+              </li>
+            ))}
+          </ul>
+
+          <div class="c-switch">
+            <span>系统代理</span>
+            <span class="sw"><i></i></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -98,96 +88,423 @@ const facts = [
 <style>
   .hero {
     position: relative;
-    padding: clamp(40px, 7vw, 88px) 0 clamp(48px, 7vw, 80px);
-    background:
-      radial-gradient(600px 300px at 85% 10%, rgba(120, 140, 255, 0.08), transparent 70%),
-      radial-gradient(520px 280px at 5% 0%, rgba(140, 100, 255, 0.07), transparent 70%),
-      #fff;
+    isolation: isolate;
     overflow: hidden;
+    padding: clamp(48px, 7.5vw, 96px) 0 clamp(56px, 7vw, 88px);
+  }
+  /* 细网格 + 两团青色微光，向四周淡出 */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(520px 380px at 76% 42%, rgba(206, 181, 249, 0.16), transparent 70%),
+      radial-gradient(420px 300px at 92% 78%, rgba(182, 147, 243, 0.12), transparent 70%),
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 56px 56px,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 56px 56px;
+    -webkit-mask-image: radial-gradient(1100px 620px at 62% 36%, #000 25%, transparent 78%);
+    mask-image: radial-gradient(1100px 620px at 62% 36%, #000 25%, transparent 78%);
   }
   .hero-inner {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 40px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(40px, 6vw, 80px);
     align-items: center;
   }
-  h1 {
-    font-size: clamp(36px, 5.6vw, 58px);
-    font-weight: 800;
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding: 5px 12px 5px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(22, 24, 28, 0.7);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-2);
     letter-spacing: 0.02em;
-    margin-bottom: 14px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(206, 181, 249, 0.15), 0 0 12px rgba(206, 181, 249, 0.8);
+  }
+  h1 {
+    font-size: var(--fs-hero);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    h1 {
+      background: linear-gradient(180deg, #ffffff 30%, #b7bdc3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
   }
   .hero-sub {
-    font-size: clamp(18px, 2.2vw, 22px);
-    color: var(--ink);
-    font-weight: 600;
-    margin-bottom: 14px;
+    font-size: clamp(18px, 2vw, 21px);
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-wrap: balance;
   }
   .hero-desc {
-    max-width: 580px;
-    color: var(--text);
+    max-width: 36em;
+    color: var(--muted);
+    line-height: 1.85;
+    text-wrap: pretty;
   }
   .hero-cta {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin: 28px 0 32px;
+    margin: 32px 0 40px;
   }
-  .hero-facts {
+  .hero-quick {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 640px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    margin: 0;
-    max-width: 600px;
-  }
-  .hero-facts div {
-    background: #fff;
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 10px 12px;
+    border-radius: var(--r);
+    background: rgba(14, 15, 17, 0.72);
+    overflow: hidden;
   }
-  .hero-facts dt {
+  .hero-quick li + li {
+    border-left: 1px solid var(--line);
+  }
+  .hero-quick a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-height: 72px;
+    height: 100%;
+    padding: 12px 16px;
+    text-decoration: none;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .hero-quick a:hover {
+    background: rgba(206, 181, 249, 0.06);
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+  .q-device {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .q-client {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+  .q-arrow {
+    color: var(--dim);
+    transition: color 0.18s ease;
+  }
+  .hero-quick a:hover .q-arrow {
+    color: var(--accent);
+  }
+
+  /* —— 装饰：订阅控制台 —— */
+  .hero-art {
+    position: relative;
+  }
+  .hero-art::before {
+    content: '';
+    position: absolute;
+    inset: 12% -4% -10% 8%;
+    z-index: -1;
+    background: radial-gradient(closest-side, rgba(206, 181, 249, 0.22), transparent);
+    filter: blur(24px);
+  }
+  .console {
+    position: relative;
+    max-width: 480px;
+    margin-left: auto;
+    border-radius: var(--r-lg);
+    background: linear-gradient(180deg, rgba(30, 33, 38, 0.94), rgba(17, 18, 21, 0.97));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 48px 96px -40px rgba(0, 0, 0, 0.95),
+      0 0 0 1px rgba(0, 0, 0, 0.5);
     font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-2);
+    overflow: hidden;
+  }
+  .console::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 14%;
+    right: 14%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(224, 207, 253, 0.8), transparent);
+  }
+  .c-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.015);
+  }
+  .c-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .c-dots i {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2c3036;
+  }
+  .c-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .c-sep {
+    color: var(--dim);
+    margin: 0 8px;
+  }
+  .c-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px;
+  }
+  .c-row-label,
+  .c-list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
     color: var(--muted);
   }
-  .hero-facts dd {
-    margin: 0;
-    color: var(--ink);
-    font-weight: 700;
-    font-size: 17px;
+  .c-row-label {
+    margin-bottom: -6px;
   }
-  .hero-art svg {
-    width: 100%;
-    height: auto;
+  .c-hint {
+    font-size: 12px;
+    color: var(--dim);
   }
-  .flow path {
-    stroke-dasharray: 6 8;
-    animation: flow 2.4s linear infinite;
+  .c-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 12px;
+    border-radius: var(--r-sm);
+    background: var(--well);
+    border: 1px solid rgba(206, 181, 249, 0.4);
+    box-shadow: 0 0 0 3px rgba(206, 181, 249, 0.08);
   }
-  @keyframes flow {
-    to {
-      stroke-dashoffset: -28;
+  .c-url {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-2);
+  }
+  .u-scheme,
+  .u-path {
+    color: var(--muted);
+  }
+  .u-mask {
+    color: var(--dim);
+    letter-spacing: 0.06em;
+  }
+  .u-token {
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .c-caret {
+    display: inline-block;
+    width: 7px;
+    height: 15px;
+    margin-left: 2px;
+    vertical-align: -3px;
+    background: var(--accent);
+    animation: caret 1.1s steps(1) infinite;
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
     }
   }
-  @media (max-width: 899px) {
+  .c-btn {
+    flex: none;
+    padding: 5px 14px;
+    border-radius: 7px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .c-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .p-check {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(182, 147, 243, 0.16);
+    color: #cab4f0;
+  }
+  .p-name {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .p-tag,
+  .n-proto {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    padding: 0 6px;
+    line-height: 18px;
+  }
+  .p-meta {
+    margin-left: auto;
+    font-size: 12px;
+    color: #cab4f0;
+  }
+  .c-list-head {
+    margin-top: 2px;
+  }
+  .c-modes {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 8px;
+    background: var(--well);
+    border: 1px solid var(--line);
+  }
+  .c-modes span {
+    padding: 1px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .c-modes .is-on {
+    background: var(--surface-3);
+    color: var(--text);
+  }
+  .c-nodes {
+    list-style: none;
+    margin: -4px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .c-nodes li {
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 12px;
+    border-radius: 8px;
+  }
+  .c-nodes li.is-on {
+    background: rgba(206, 181, 249, 0.08);
+    box-shadow: inset 2px 0 0 var(--accent);
+    color: var(--text);
+  }
+  .n-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(202, 180, 240, 0.55);
+  }
+  .is-on .n-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(206, 181, 249, 0.18), 0 0 10px rgba(206, 181, 249, 0.9);
+  }
+  .c-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--text-2);
+  }
+  .sw {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--accent-2);
+    box-shadow: 0 0 14px rgba(182, 147, 243, 0.5);
+  }
+  .sw i {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  @media (max-width: 1023px) {
     .hero-inner {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
-    .hero-art {
-      order: -1;
-      max-width: 340px;
+    .console {
       margin: 0 auto;
     }
   }
-  @media (max-width: 560px) {
-    .hero-facts {
+  @media (max-width: 639px) {
+    .hero-quick {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .hero-art {
-      max-width: 260px;
+    .hero-quick li + li {
+      border-left: 0;
+    }
+    .hero-quick li:nth-child(even) {
+      border-left: 1px solid var(--line);
+    }
+    .hero-quick li:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
     }
     .hero-cta .btn {
       flex: 1 1 140px;
+    }
+    .c-body {
+      padding: 16px;
+    }
+    .c-nodes li:nth-child(n + 4) {
+      display: none;
     }
   }
 </style>

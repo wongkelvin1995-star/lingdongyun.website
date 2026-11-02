@@ -5,16 +5,20 @@ import ActionLink from './ActionLink.astro';
 
 const path = Astro.url.pathname;
 const onHome = path === '/';
-// 首页使用短锚点 #plans；其他页面保留 /#plans 以返回首页对应区域
+// 首页使用短锚点 #devices；其他页面保留 /#devices 以返回首页对应区域
 const resolve = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
 const isCurrent = (href: string) =>
   (href === '/' && onHome) || (href === '/guides/' && path.startsWith('/guides/'));
 ---
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label={`${SITE.brand}（${SITE.latinName}）首页`}>
-      <Logo />
-      <span class="brand-name">{SITE.brand}</span>
+    <a class="brand" href="/" aria-label={`${SITE.name}首页`}>
+      <Logo size={30} />
+      <span class="brand-text">
+        <span class="brand-name">{SITE.brand}</span>
+        <span class="brand-dot" aria-hidden="true">·</span>
+        <span class="brand-role">{SITE.role}</span>
+      </span>
     </a>
 
     <nav class="main-nav" id="main-nav" aria-label="主导航">
@@ -28,7 +32,7 @@ const isCurrent = (href: string) =>
         ))}
       </ul>
       <div class="nav-cta-mobile">
-        <ActionLink block>立即注册</ActionLink>
+        <ActionLink block>注册 / 登录</ActionLink>
       </div>
     </nav>
 
@@ -64,55 +68,87 @@ const isCurrent = (href: string) =>
   }
 </script>
 
+
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: saturate(160%) blur(10px);
+    background: rgba(10, 10, 11, 0.78);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
     border-bottom: 1px solid var(--line);
   }
   .header-inner {
     display: flex;
     align-items: center;
     gap: 24px;
-    height: 68px;
+    height: var(--header-h);
   }
   .brand {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    text-decoration: none;
-    color: var(--ink);
-    font-weight: 700;
-    font-size: 20px;
+    min-height: 44px;
     flex: none;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .brand-name {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .brand-dot {
+    color: var(--dim);
+  }
+  .brand-role {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .brand:hover {
+    color: var(--text);
+  }
+  .brand:hover .brand-role {
+    color: var(--accent-hi);
   }
   .main-nav {
     margin-left: auto;
   }
   .main-nav ul {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .main-nav a {
+  .main-nav ul a {
     display: inline-flex;
     align-items: center;
     min-height: 40px;
-    padding: 0 14px;
-    border-radius: 10px;
-    color: var(--text);
+    padding: 0 12px;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 14.5px;
     text-decoration: none;
-    font-size: 15px;
+    transition: color 0.15s ease, background-color 0.15s ease;
   }
-  .main-nav a:hover,
-  .main-nav a[aria-current='page'] {
-    color: var(--brand-ink);
-    background: var(--tint);
+  .main-nav ul a:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .main-nav ul a[aria-current='page'] {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px var(--line);
   }
   .nav-cta-mobile {
     display: none;
@@ -126,12 +162,15 @@ const isCurrent = (href: string) =>
     display: none;
     width: 44px;
     height: 44px;
-    border: 1px solid var(--line);
-    background: #fff;
-    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--r-sm);
     cursor: pointer;
     align-items: center;
     justify-content: center;
+  }
+  .menu-toggle:hover {
+    border-color: var(--accent-line);
   }
   .bars {
     display: grid;
@@ -140,25 +179,24 @@ const isCurrent = (href: string) =>
   .bars span {
     display: block;
     width: 18px;
-    height: 2px;
-    background: var(--ink);
+    height: 1.5px;
+    background: var(--text);
     border-radius: 2px;
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
   .menu-toggle[aria-expanded='true'] .bars span:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
+    transform: translateY(5.5px) rotate(45deg);
   }
   .menu-toggle[aria-expanded='true'] .bars span:nth-child(2) {
     opacity: 0;
   }
   .menu-toggle[aria-expanded='true'] .bars span:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
+    transform: translateY(-5.5px) rotate(-45deg);
   }
 
   @media (max-width: 959px) {
     .header-inner {
       justify-content: space-between;
-      height: 62px;
     }
     .menu-toggle {
       display: inline-flex;
@@ -169,29 +207,50 @@ const isCurrent = (href: string) =>
       left: 0;
       right: 0;
       top: 100%;
-      background: #fff;
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 12px 24px rgba(30, 22, 80, 0.08);
-      padding: 8px var(--gutter) 18px;
+      background: var(--bg-band);
+      border-bottom: 1px solid var(--line-strong);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.8);
+      padding: 8px var(--gutter) 20px;
     }
     .main-nav.is-open {
       display: block;
     }
     .main-nav ul {
       flex-direction: column;
-      gap: 2px;
+      gap: 0;
     }
-    .main-nav a {
+    .main-nav li + li {
+      border-top: 1px solid var(--line);
+    }
+    .main-nav ul a {
       width: 100%;
       min-height: 48px;
+      padding: 0 4px;
       font-size: 16px;
+      color: var(--text-2);
+      border-radius: 0;
+    }
+    .main-nav ul a:hover,
+    .main-nav ul a[aria-current='page'] {
+      background: none;
+      box-shadow: none;
+      color: var(--accent);
     }
     .nav-cta-mobile {
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
     }
   }
-  @media (max-width: 400px) {
+  @media (max-width: 420px) {
+    .brand {
+      gap: 8px;
+    }
+    .brand-name {
+      font-size: 16px;
+    }
+    .brand-role {
+      font-size: 14px;
+    }
     .header-actions :global(.header-cta) {
       display: none;
     }

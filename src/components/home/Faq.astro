@@ -1,13 +1,13 @@
 ---
 import { FAQS } from '../../data/faq';
-import ActionLink from '../ActionLink.astro';
+import { LINKS } from '../../config/site';
 ---
 <section class="section" id="faq" aria-labelledby="faq-title">
   <div class="container faq-wrap">
     <div class="section-head">
       <p class="eyebrow">常见问题</p>
-      <h2 id="faq-title">灵动云常见问题（FAQ）</h2>
-      <p>关于灵动云机场的价格、套餐区别、客户端、订阅导入、线路与试用，新用户最常问的 10 个问题。</p>
+      <h2 id="faq-title">使用中的常见问题</h2>
+      <p>订阅链接、订阅格式、多设备、更新频率、代理模式和连接异常，导入和日常使用时最常被问到的 {FAQS.length} 个问题。</p>
     </div>
     <ol class="faq-list">
       {FAQS.map((f, i) => (
@@ -20,79 +20,93 @@ import ActionLink from '../ActionLink.astro';
       ))}
     </ol>
     <div class="faq-cta">
-      <p>准备好了？注册后即可在用户中心选择套餐。</p>
-      <ActionLink>注册并订购</ActionLink>
+      <p>
+        没找到你的问题？先浏览<a href="/guides/">全部教程</a>；连接类问题可以到<a href={LINKS.helpCenter}>帮助中心</a>查找答案或联系在线客服。
+      </p>
     </div>
   </div>
 </section>
 
 <style>
   .faq-wrap {
-    max-width: 880px;
+    max-width: calc(880px + var(--gutter) * 2);
   }
+  .faq-wrap :global(.section-head) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .faq-wrap :global(.section-head > p:not(.eyebrow)) {
+    grid-column: 1;
+    grid-row: 3;
+    margin-top: 14px;
+    max-width: 56em;
+    text-wrap: balance;
+  }
+  /* 文档式问答：一块面板，问题之间细线分隔 */
   .faq-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 14px;
+    border-top: 1px solid var(--line);
   }
   .faq-item {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
   }
   .faq-q {
-    display: flex;
-    gap: 12px;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
     align-items: baseline;
-    font-size: 17px;
-    font-weight: 700;
+    font-size: var(--fs-md);
+    font-weight: 600;
+    line-height: 1.55;
     margin-bottom: 10px;
-    text-wrap: balance;
+    text-wrap: pretty;
   }
   .faq-n {
-    flex: none;
+    font-family: var(--mono);
     font-size: 13px;
-    font-weight: 700;
-    color: var(--brand-ink);
-    background: var(--tint);
-    border-radius: 6px;
-    padding: 1px 7px;
+    font-weight: 500;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
   }
   .faq-a {
+    grid-column: 2;
     display: grid;
     gap: 10px;
-    color: var(--text);
-    padding-left: 46px;
+    color: var(--muted);
+    line-height: 1.85;
+    font-size: 15.5px;
   }
   .faq-cta {
     margin-top: 32px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 22px 24px;
-    border-radius: 16px;
-    background: var(--tint);
-    border: 1px solid #e7defe;
+    padding: 18px 22px;
+    border-radius: var(--r);
+    background: var(--bg-band);
+    border: 1px solid var(--line);
   }
   .faq-cta p {
-    color: var(--ink);
-    font-weight: 600;
+    color: var(--text-2);
   }
   @media (max-width: 639px) {
     .faq-item {
-      padding: 16px;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 22px 0;
+    }
+    .faq-q {
+      grid-template-columns: 40px minmax(0, 1fr);
+      font-size: 17px;
     }
     .faq-a {
-      padding-left: 0;
+      grid-column: 1;
+      padding-left: 40px;
     }
-    .faq-cta :global(.btn) {
-      width: 100%;
+  }
+  @media (max-width: 400px) {
+    .faq-a {
+      padding-left: 0;
     }
   }
 </style>

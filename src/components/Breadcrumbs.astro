@@ -19,26 +19,40 @@ const { items } = Astro.props;
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    align-items: center;
     margin: 0;
     padding: 0;
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--muted);
+  }
+  .crumbs li {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
   }
   .crumbs li + li::before {
     content: '/';
-    margin: 0 6px 0 2px;
-    color: #a3a4b8;
+    margin: 0 10px;
+    font-family: var(--mono);
+    color: var(--dim);
+    opacity: 0.7;
   }
   .crumbs a {
-    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    color: var(--text-2);
     text-decoration: none;
   }
   .crumbs a:hover {
-    color: var(--brand-ink);
-    text-decoration: underline;
+    color: var(--accent);
   }
   .crumbs span {
-    color: var(--muted);
+    color: var(--dim);
+  }
+  @media (max-width: 959px) {
+    .crumbs a {
+      min-height: 44px;
+    }
   }
 </style>

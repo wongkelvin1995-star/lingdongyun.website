@@ -1,0 +1,170 @@
+---
+/** 首页「按设备选教程」：四类设备卡片，每张卡片列出常用客户端与对应教程 */
+import { DEVICES } from '../../data/devices';
+---
+<section class="section section--soft" id="devices" aria-labelledby="devices-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">按设备选教程</p>
+      <h2 id="devices-title">你用的是哪种设备？</h2>
+      <p>每种设备都有常用的客户端和对应的订阅格式。找到自己的设备，按卡片里的教程安装客户端并导入灵动云订阅。</p>
+    </div>
+    <ul class="device-grid">
+      {DEVICES.map((d) => (
+        <li class="card device" id={`device-${d.id}`}>
+          <div class="device-top">
+            <span class="device-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path d={d.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <h3>{d.label}</h3>
+          </div>
+          <p class="device-clients"><span>常用客户端</span>{d.clients}</p>
+          <p class="device-hint">{d.hint}</p>
+          <ul class="device-links">
+            {d.guides.map((g) => (
+              <li><a href={`/guides/${g.slug}/`}>{g.label}<span aria-hidden="true">→</span></a></li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+    <p class="devices-more">
+      不确定装哪个客户端？先看<a href="/guides/choose-client/">按设备选客户端</a>，里面有设备、客户端与订阅格式的对照表。
+    </p>
+  </div>
+</section>
+
+<style>
+  .device-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .device {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px 22px 18px;
+    min-width: 0;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  /* 顶边细光：悬停时出现 */
+  .device::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 22px;
+    right: 22px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .device:hover,
+  .device:focus-within {
+    border-color: rgba(206, 181, 249, 0.3);
+    box-shadow: var(--lift), var(--glow);
+  }
+  .device:hover::before,
+  .device:focus-within::before {
+    opacity: 1;
+  }
+  .device-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .device-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    color: var(--accent);
+    background: radial-gradient(circle at 50% 25%, rgba(206, 181, 249, 0.18), rgba(206, 181, 249, 0.03) 70%), var(--well);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.28), 0 8px 20px -12px rgba(206, 181, 249, 0.6);
+  }
+  .device h3 {
+    font-size: var(--fs-lg);
+    letter-spacing: 0.01em;
+  }
+  .device-clients {
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    background: var(--well);
+    border: 1px solid var(--line);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .device-clients span {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+  .device-hint {
+    flex: 1;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .device-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+  }
+  .device-links li + li {
+    border-top: 1px solid var(--line);
+  }
+  .device-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 44px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: color 0.15s ease, padding 0.2s ease;
+  }
+  .device-links a span {
+    color: var(--dim);
+    transition: transform 0.2s ease, color 0.15s ease;
+  }
+  .device-links a:hover {
+    color: var(--accent);
+  }
+  .device-links a:hover span {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  .devices-more {
+    margin-top: 32px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  @media (max-width: 1099px) {
+    .device-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .device-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,7 +1,14 @@
 ---
+// 唯一自托管字体：Spline Sans Mono（仅拉丁子集，400 / 500，font-display: swap），用于等宽细节
+import '@fontsource/spline-sans-mono/latin-400.css';
+import '@fontsource/spline-sans-mono/latin-500.css';
 import '../styles/global.css';
-import { SITE, abs } from '../config/site';
+import { SITE, ORG_ID, OFFICIAL_HOME, abs } from '../config/site';
 import Header from '../components/Header.astro';
+import GlobalNav from '../components/GlobalNav.astro';
+import MotionHead from '../components/MotionHead.astro';
+import MotionIntro from '../components/MotionIntro.astro';
+import MotionReveal from '../components/MotionReveal.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
@@ -10,11 +17,11 @@ interface Props {
   /** 不传则使用当前路径 */
   path?: string;
   ogType?: 'website' | 'article';
+  /** 页面自身的结构化数据节点（不含 @context），与组织、站点节点合并为一个 @graph */
   jsonLd?: Record<string, unknown>[];
   noindex?: boolean;
   publishedTime?: string;
   modifiedTime?: string;
-  keywords?: readonly string[];
 }
 
 const {
@@ -26,24 +33,47 @@ const {
   noindex = false,
   publishedTime,
   modifiedTime,
-  keywords,
 } = Astro.props;
 
 const canonical = abs(path);
 // 图标版本号：更换 Logo 后修改此值，强制浏览器重新下载标签页图标
-const ICON_V = '20261018';
+// 2026-11-01：换为官方 Logo（public/brand/logo.svg，favicon.svg 为同一文件）
+const ICON_V = '20261101';
 const ogImage = abs(SITE.ogImage);
+
+/**
+ * 结构化数据：灵动云组织实体只用官网定义的 @id（这里给出最小节点），
+ * 本站 WebSite 由该组织发布；页面节点通过 @id 引用二者。
+ */
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': ORG_ID, name: SITE.brand, url: OFFICIAL_HOME },
+    {
+      '@type': 'WebSite',
+      '@id': abs('/#website'),
+      url: abs('/'),
+      name: SITE.name,
+      description: SITE.defaultDescription,
+      inLanguage: SITE.lang,
+      publisher: { '@id': ORG_ID },
+    },
+    ...jsonLd,
+  ],
+};
 ---
 <!doctype html>
 <html lang={SITE.lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 出场动态：判断是否播放 + 样式（tools/motion.py） -->
+    <MotionHead />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(',')} />}
     {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta name="color-scheme" content="dark" />
     <link rel="icon" href={`/favicon.svg?v=${ICON_V}`} type="image/svg+xml" />
     <link rel="icon" href={`/favicon.ico?v=${ICON_V}`} sizes="32x32" />
     <link rel="apple-touch-icon" href={`/apple-touch-icon.png?v=${ICON_V}`} />
@@ -57,7 +87,7 @@ const ogImage = abs(SITE.ogImage);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="灵动云官网：月付、年付与一次性流量方案" />
+    <meta property="og:image:alt" content={SITE.ogImageAlt} />
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta name="twitter:card" content="summary_large_image" />
@@ -65,14 +95,19 @@ const ogImage = abs(SITE.ogImage);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+    <!-- 悬停或按下链接时预先加载同站页面，点击后打开更快（只在支持的浏览器生效） -->
+    <script type="speculationrules" is:inline set:html={"{\"prefetch\":[{\"where\":{\"and\":[{\"href_matches\":\"/*\"},{\"not\":{\"selector_matches\":\"[target=_blank], [download], [rel~=nofollow]\"}}]},\"eagerness\":\"moderate\"}]}"}></script>
   </head>
   <body>
+    <MotionIntro />
     <a class="skip-link" href="#main">跳到主要内容</a>
+    <GlobalNav />
     <Header />
     <main id="main">
       <slot />
     </main>
     <Footer />
+    <MotionReveal />
   </body>
 </html>

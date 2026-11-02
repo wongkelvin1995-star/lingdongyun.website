@@ -4,14 +4,14 @@ import GuideCard from '../GuideCard.astro';
 
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
 ---
-<section class="section" id="guides" aria-labelledby="guides-title">
+<section class="section section--soft" id="guides" aria-labelledby="guides-title">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow">使用教程</p>
-      <h2 id="guides-title">灵动云机场使用教程：从选套餐到连上节点</h2>
-      <p>{guides.length} 篇原创教程：灵动云套餐怎么选、Clash 与小火箭订阅导入、Windows 与 Android 客户端设置、BGP 与 SS 协议科普，以及节点超时和订阅更新失败的排查方法。</p>
+      <p class="eyebrow">全部教程</p>
+      <h2 id="guides-title">全部 {guides.length} 篇教程</h2>
+      <p>从选客户端、看懂概念，到 Clash、Clash Party、小火箭、v2rayN 和 v2rayNG 的导入与设置，每篇只讲一件事。</p>
     </div>
-    <div class="guide-grid">
+    <div class="guide-index">
       {guides.map((g) => (
         <GuideCard
           slug={g.id}
@@ -20,31 +20,32 @@ const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((
           description={g.data.description}
           category={g.data.category}
           date={g.data.updatedDate ?? g.data.pubDate}
+          variant="row"
         />
       ))}
     </div>
-    <p class="more"><a class="btn btn--ghost" href="/guides/">查看全部 {guides.length} 篇教程</a></p>
+    <p class="more"><a class="btn btn--ghost" href="/guides/">按设备浏览教程目录</a></p>
   </div>
 </section>
 
 <style>
-  .guide-grid {
+  /* 文档目录：一块面板，单列条目，细线分隔 */
+  .guide-index {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
+    padding: 8px;
+    border-radius: var(--r-lg);
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+  .guide-index > :global(.guide-card + .guide-card) {
+    border-top: 1px solid var(--line);
   }
   .more {
-    text-align: center;
-    margin-top: 30px;
-  }
-  @media (max-width: 1099px) {
-    .guide-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    margin-top: 32px;
   }
   @media (max-width: 639px) {
-    .guide-grid {
-      grid-template-columns: 1fr;
+    .guide-index {
+      padding: 4px 12px;
     }
   }
 </style>

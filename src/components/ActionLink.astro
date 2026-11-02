@@ -1,7 +1,7 @@
 ---
 /**
- * 所有外部业务操作按钮（注册 / 购买 / 前往官网 / 用户中心 / 获取客户端）统一使用此组件，
- * href 固定读取 ACTION_URL。不加 download 属性，不指向安装包。
+ * 所有「注册 / 登录用户中心 / 购买」按钮统一使用此组件，
+ * href 固定读取 ACTION_URL，新标签页打开。不加 download 属性，不指向安装包。
  */
 import { ACTION_URL } from '../config/site';
 import ExtIcon from './ExtIcon.astro';
@@ -22,7 +22,7 @@ const classes = ['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', block && 
   class={classes}
   href={ACTION_URL}
   target="_blank"
-  rel="noopener noreferrer"
-  data-action="official"
+  rel="noopener"
+  data-action="register"
   aria-label={ariaLabel}
 ><slot /><ExtIcon /></a>

@@ -1,0 +1,196 @@
+---
+/**
+ * 首页两个提示：连不上 → 帮助中心排查；没有订阅 → 官网套餐与套餐选择。
+ * 以及两行「关于本站」，说明本站只负责教程。
+ */
+import { SITE, OFFICIAL_HOME, LINKS } from '../../config/site';
+import { PLANS } from '../../data/plans';
+---
+<section class="section" id="next" aria-label="连接问题与开通订阅">
+  <div class="container">
+    <div class="callouts">
+      <div class="callout callout--main">
+        <span class="callout-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7.5v5.5M12 16.5v.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <h2>导入后连不上？</h2>
+        <p>
+          订阅更新失败、节点全部超时、速度变慢或流量用完，帮助中心按症状整理了检查顺序。照着检查仍未解决，可以在帮助中心联系在线客服，或在用户中心提交工单。
+        </p>
+        <div class="callout-actions">
+          <a class="btn btn--primary" href={LINKS.troubleshooting}>查看连接问题排查步骤</a>
+          <a class="btn btn--ghost" href={LINKS.helpCenter}>去帮助中心找在线客服</a>
+        </div>
+      </div>
+
+      <div class="callout callout--side">
+        <span class="callout-icon callout-icon--quiet" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path d="M4 7.5h16v11H4zM8 7.5V5.5h8v2M4 12h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <h2>还没有订阅？</h2>
+        <p>
+          灵动云共 {PLANS.length} 档套餐，分为月付、年付、一次性流量包和至尊私人定制。价格与套餐说明在官网；拿不准选哪档，先用套餐选择估算每月流量。
+        </p>
+        <ul class="callout-links">
+          <li><a href={OFFICIAL_HOME}>在官网查看 {PLANS.length} 档套餐</a></li>
+          <li><a href={LINKS.planPicker}>用套餐选择估算每月流量</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="about-site">
+      <strong>关于本站</strong>
+      <span>{SITE.name}（{SITE.domain}）是灵动云官方的教程站点，只讲客户端安装、订阅导入和日常设置。套餐价格与注册请看官网，连接问题与在线客服请到帮助中心。</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .callouts {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+  .callout {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .callout--main {
+    background:
+      radial-gradient(520px 260px at 100% 0%, rgba(206, 181, 249, 0.14), transparent 70%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 160px), var(--surface);
+    border: 1px solid rgba(206, 181, 249, 0.26);
+    box-shadow: var(--lift);
+  }
+  /* 左侧一条青色提示条，像文档里的「注意」提示框 */
+  .callout--main::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: var(--grad);
+    box-shadow: 0 0 14px rgba(206, 181, 249, 0.7);
+  }
+  .callout--side {
+    background: var(--bg-band);
+    border: 1px solid var(--line);
+  }
+  .callout-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.3), 0 0 24px -8px rgba(206, 181, 249, 0.6);
+  }
+  .callout-icon--quiet {
+    color: var(--text-2);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+  }
+  .callout h2 {
+    font-size: clamp(21px, 2.3vw, 25px);
+  }
+  .callout p {
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .callout-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+  .callout-links {
+    list-style: none;
+    padding: 0;
+    margin: auto 0 0;
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  .callout-links li {
+    border-bottom: 1px solid var(--line);
+  }
+  .callout-links a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .callout-links a::after {
+    content: '→';
+    margin-left: auto;
+    padding-left: 12px;
+    color: var(--dim);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .callout-links a:hover {
+    color: var(--accent);
+  }
+  .callout-links a:hover::after {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  .about-site {
+    margin-top: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    padding: 16px 20px;
+    border-radius: var(--r);
+    border: 1px dashed var(--line-strong);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .about-site strong {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: var(--r-xs);
+    background: var(--accent-soft);
+    border: 1px solid rgba(206, 181, 249, 0.25);
+  }
+  .about-site span {
+    text-wrap: pretty;
+    line-height: 1.8;
+  }
+  @media (max-width: 899px) {
+    .callouts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 639px) {
+    .callout {
+      padding: 24px 20px;
+    }
+    .callout-actions .btn {
+      width: 100%;
+      white-space: normal;
+    }
+    .about-site {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+</style>

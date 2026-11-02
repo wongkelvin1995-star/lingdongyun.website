@@ -1,0 +1,171 @@
+---
+/**
+ * 「灵动云官方站点」区块（五站统一结构，只在首页出现）。
+ * 根元素必须带 data-ldy-family；当前站点显示「当前站点」标记且不加链接。
+ * 站点列表与顺序读取 site.ts 的 FAMILY。
+ */
+import { FAMILY, CURRENT_SITE_KEY, OFFICIAL_PAGE } from '../config/site';
+---
+<section class="section section--soft family" id="official-sites" aria-labelledby="family-title" data-ldy-family>
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">官方站点</p>
+      <h2 id="family-title">灵动云官方站点</h2>
+      <p>灵动云的内容分布在以下五个官方站点，各自负责一件事。</p>
+    </div>
+    <ol class="family-list">
+      {FAMILY.map((s) => {
+        const current = s.key === CURRENT_SITE_KEY;
+        return (
+          <li class:list={['fam', { 'is-current': current }]}>
+            <p class="fam-head">
+              {current ? (
+                <span class="fam-name" aria-current="page">{s.name}</span>
+              ) : (
+                <a class="fam-name" href={s.url}>{s.name}</a>
+              )}
+              {current && <span class="fam-badge">当前站点</span>}
+            </p>
+            <p class="fam-domain">{s.domain}</p>
+            <p class="fam-desc">{s.desc}</p>
+          </li>
+        );
+      })}
+    </ol>
+    <p class="family-more"><a class="btn btn--ghost btn--sm" href={OFFICIAL_PAGE}>查看官方站点说明</a></p>
+  </div>
+</section>
+
+<style>
+  /* 五个官方站点：一块目录面板，等分五格，当前站点高亮 */
+  .family-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .fam {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 24px 20px 22px;
+    transition: background-color 0.2s ease;
+  }
+  .fam + .fam {
+    border-left: 1px solid var(--line);
+  }
+  .fam:not(.is-current):hover,
+  .fam:not(.is-current):focus-within {
+    background: rgba(206, 181, 249, 0.04);
+  }
+  .fam.is-current {
+    background: linear-gradient(180deg, rgba(206, 181, 249, 0.09), rgba(206, 181, 249, 0.015) 70%);
+  }
+  .fam.is-current::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--grad);
+    box-shadow: 0 0 16px rgba(206, 181, 249, 0.8);
+  }
+  .fam-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+  .fam-name {
+    font-size: 16.5px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
+  a.fam-name::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  a.fam-name:hover {
+    color: var(--accent-hi);
+  }
+  a.fam-name:focus-visible {
+    outline: none;
+  }
+  a.fam-name:focus-visible::after {
+    outline: 2px solid var(--accent-hi);
+    outline-offset: -3px;
+    border-radius: 4px;
+  }
+  .fam-badge {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--on-accent);
+    background: var(--accent);
+    border-radius: var(--r-xs);
+    padding: 1px 8px;
+  }
+  .fam-domain {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    word-break: break-all;
+  }
+  .fam-desc {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+  .family-more {
+    margin-top: 24px;
+  }
+  /* 窄一些的屏幕：改为目录行（名称 / 域名 / 说明） */
+  @media (max-width: 1099px) {
+    .family-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .fam {
+      display: grid;
+      grid-template-columns: minmax(0, 15em) minmax(0, 12em) minmax(0, 1fr);
+      align-items: baseline;
+      gap: 4px 24px;
+      padding: 18px 22px;
+    }
+    .fam + .fam {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .fam.is-current::before {
+      top: 0;
+      bottom: 0;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+    .fam-desc {
+      margin-top: 0;
+    }
+  }
+  @media (max-width: 639px) {
+    .fam {
+      display: flex;
+      gap: 4px;
+      padding: 18px 18px 16px;
+    }
+    .fam-desc {
+      margin-top: 4px;
+    }
+  }
+</style>
