@@ -1,92 +1,80 @@
 /**
- * 站点统一配置 —— 修改品牌、域名、统一操作入口只改这里。
+ * 站点统一配置 —— 修改站点名称、域名、注册入口、官方站点列表只改这里。
  *
- * ACTION_URL：所有「立即注册 / 注册并订购 / 购买套餐 / 前往官网 / 进入用户中心 /
- * 前往官网获取客户端」按钮唯一读取的地址。务必完整保留 https、/#/ 与 ?code=HHoxxHGa。
+ * lingdongyun.website 是灵动云官方「使用指南」站点：按设备整理客户端与订阅导入教程。
+ * 只有 lingdongyun.site 可以称为「官网 / 官方网站」，本站文案、标题、结构化数据都不得自称官网。
+ *
+ * ACTION_URL：所有「注册 / 登录用户中心 / 购买」按钮唯一读取的地址。
+ * 务必完整保留 https、/#/ 与 ?code=HHoxxHGa。
  */
 export const SITE = {
-  name: '灵动云官网',
+  /** 站点名称（标题后缀、og:site_name、WebSite.name） */
+  name: '灵动云使用指南',
   brand: '灵动云',
+  /** 站点角色标签（页眉 Logo 旁显示） */
+  role: '使用指南',
   url: 'https://lingdongyun.website',
+  domain: 'lingdongyun.website',
   lang: 'zh-CN',
   locale: 'zh_CN',
   timezone: 'Asia/Shanghai',
   /** 英文 / 拼音名 */
   latinName: 'Lingdongyun',
-  defaultTitle: '灵动云官网｜灵动云机场 · 灵动云VPN（Lingdongyun）套餐与教程',
+  defaultTitle: '灵动云使用指南｜Clash、小火箭、v2rayN 订阅导入教程',
   defaultDescription:
-    '灵动云（Lingdongyun，又称灵动云机场、灵动云VPN）官网：月付、年付与一次性流量包共 8 档套餐价格，订阅导入与 Clash、小火箭客户端教程，官方注册入口。',
+    '灵动云官方使用指南：按设备分步讲解订阅导入、节点切换与常用设置，覆盖 Windows、macOS、Android、iPhone 上的 Clash、Clash Party、小火箭与 v2rayN。',
   ogImage: '/og-default.png',
-  /** 套餐与页面资料的整理日期（显示在套餐区与页脚） */
-  dataUpdated: '2026-10-17',
+  ogImageAlt: '灵动云使用指南：按设备整理的客户端与订阅导入教程',
+  /** 本次内容整理日期（文章「更新于」、sitemap lastmod、页脚） */
+  dataUpdated: '2026-11-01',
+} as const;
+
+/** 唯一注册 / 登录入口（用户中心） */
+export const ACTION_URL = 'https://varnexa.lingdongaff.com/#/?code=HHoxxHGa';
+
+/** 灵动云组织实体：五个官方站点的 JSON-LD 统一引用这个 @id */
+export const ORG_ID = 'https://lingdongyun.site/#org';
+
+/** 官网首页与「官方站点说明」页（页脚每页链接这两个地址） */
+export const OFFICIAL_HOME = 'https://lingdongyun.site/';
+export const OFFICIAL_PAGE = 'https://lingdongyun.site/guides/lingdongyun-official/';
+
+/**
+ * 正文里用到的姊妹站地址（只使用各站最终 URL，不经过跳转）。
+ * 页面级的上下文链接用这些常量；页眉页脚只链接官网。
+ */
+export const LINKS = {
+  troubleshooting: 'https://lingdongyun.sbs/guides/troubleshooting/',
+  helpCenter: 'https://lingdongyun.sbs/',
+  planPicker: 'https://lingdongyun.best/',
+  beginner: 'https://lingdongyun.lol/',
 } as const;
 
 /**
- * 品牌名称与常见叫法 —— 品牌词 SEO 的唯一来源。
- * 用于：首页「关于灵动云」品牌信息、结构化数据 alternateName、meta keywords、FAQ。
- * 新增叫法只改这里。
+ * 灵动云五个官方站点（顺序固定，与「官方站点说明」一致）。
+ * 首页「灵动云官方站点」区块读取这里；current 为本站。
  */
-export const BRAND_ALIASES = [
-  '灵动云官网',
-  '灵动云机场',
-  '灵动云VPN',
-  '灵动云梯子',
-  '灵动云加速器',
-  'Lingdongyun',
-  'LingDongYun',
+export const FAMILY = [
+  { key: 'site', name: '灵动云官网', domain: 'lingdongyun.site', url: 'https://lingdongyun.site/', desc: '品牌介绍、9 档套餐与注册入口' },
+  { key: 'website', name: '灵动云使用指南', domain: 'lingdongyun.website', url: 'https://lingdongyun.website/', desc: '按设备整理的客户端与订阅导入教程' },
+  { key: 'best', name: '灵动云套餐选择', domain: 'lingdongyun.best', url: 'https://lingdongyun.best/', desc: '9 档套餐对比与每月流量估算' },
+  { key: 'sbs', name: '灵动云帮助中心', domain: 'lingdongyun.sbs', url: 'https://lingdongyun.sbs/', desc: '连接问题排查、网络知识与在线客服' },
+  { key: 'lol', name: '灵动云新手入门', domain: 'lingdongyun.lol', url: 'https://lingdongyun.lol/', desc: '注册、选套餐、导入订阅、连接，4 步上手' },
 ] as const;
-
-/** 首页 meta keywords（百度等仍会参考；Google 忽略此标签） */
-export const BRAND_KEYWORDS = [
-  '灵动云',
-  '灵动云官网',
-  '灵动云机场',
-  '灵动云VPN',
-  '灵动云梯子',
-  '灵动云加速器',
-  '灵动云套餐',
-  '灵动云价格',
-  '灵动云订阅',
-  '灵动云客户端',
-  'lingdongyun',
-  '机场推荐',
-  '便宜机场',
-  '稳定机场',
-  '科学上网',
-  'Clash机场',
-  '小火箭机场',
-  '月付机场',
-  '年付机场',
-  '不限时流量包',
-] as const;
-
-/** 唯一官方操作入口 */
-export const ACTION_URL = 'https://varnexa.lingdongaff.com/#/?code=HHoxxHGa';
+export const CURRENT_SITE_KEY = 'website';
 
 /**
- * 独立客服、TG、邮箱、客户端安装包地址：本次未提供。
- * 拿到运营方确认的地址后填入；为 null 时对应入口不会渲染。
- */
-export const CONTACTS: {
-  telegram: string | null;
-  email: string | null;
-  support: string | null;
-} = {
-  telegram: null,
-  email: null,
-  support: null,
-};
-
-/**
- * 主导航。href 以 "/#" 开头的项在首页会被转换为短锚点（#plans），
- * 在其他页面保持 /#plans，保证从文章页能回到首页对应区域。
+ * 主导航。href 以 "/#" 开头的项在首页会被转换为短锚点（#devices），
+ * 在其他页面保持 /#devices，保证从文章页能回到首页对应区域。
+ * 子站导航只放一个跨站链接：「官网」→ lingdongyun.site。
  */
 export const NAV = [
   { label: '首页', href: '/' },
-  { label: '套餐方案', href: '/#plans' },
-  { label: '客户端下载', href: '/#clients' },
-  { label: '使用教程', href: '/guides/' },
+  { label: '选择设备', href: '/#devices' },
+  { label: '导入步骤', href: '/#import' },
+  { label: '全部教程', href: '/guides/' },
   { label: '常见问题', href: '/#faq' },
+  { label: '官网', href: OFFICIAL_HOME },
 ] as const;
 
 export const abs = (path: string) => new URL(path, SITE.url).toString();

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "灵动云官网 · lingdongyun.website 品牌落地页（Astro 静态站点）",
+  "description": "灵动云使用指南 · lingdongyun.website：按设备整理的客户端与订阅导入教程（Astro 静态站点）",
   "engines": {
     "node": ">=22.22.0"
   },
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.3",
+    "@fontsource/spline-sans-mono": "^5.3.0",
     "astro": "^7.4.0"
   },
   "devDependencies": {

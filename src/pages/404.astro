@@ -1,47 +1,130 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Logo from '../components/Logo.astro';
 import { SITE } from '../config/site';
 ---
-<BaseLayout title={`页面不存在｜${SITE.name}`} description="你访问的页面不存在或已移动。" noindex>
+<BaseLayout title={`页面不存在｜${SITE.name}`} description="你访问的页面不存在或已移动，可以返回灵动云使用指南首页，按设备重新查找客户端与订阅导入教程。" noindex>
   <section class="nf">
+    <div class="nf-bg" aria-hidden="true"></div>
     <div class="container">
-      <p class="code">404</p>
-      <h1>页面不存在</h1>
-      <p>这个地址没有对应的页面，可能已移动或输入有误。可以从下面的入口继续浏览：</p>
-      <ul>
-        <li><a class="btn btn--primary" href="/">返回首页</a></li>
-        <li><a class="btn btn--ghost" href="/#plans">查看套餐</a></li>
-        <li><a class="btn btn--ghost" href="/guides/">使用教程</a></li>
-      </ul>
+      <div class="nf-panel">
+        <div class="nf-bar" aria-hidden="true">
+          <span class="nf-dots"><i></i><i></i><i></i></span>
+          <span class="nf-host"><Logo size={16} />{SITE.domain}</span>
+        </div>
+        <div class="nf-body">
+          <p class="code">404</p>
+          <h1>页面不存在</h1>
+          <p>这个地址没有对应的页面，可能已移动或输入有误。可以从下面的入口继续浏览：</p>
+          <ul>
+            <li><a class="btn btn--primary" href="/">返回首页</a></li>
+            <li><a class="btn btn--ghost" href="/guides/">全部教程</a></li>
+            <li><a class="btn btn--ghost" href="/guides/choose-client/">按设备选客户端</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .nf {
-    padding: 96px 0 120px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(64px, 10vw, 120px) 0 clamp(80px, 12vw, 144px);
+  }
+  .nf-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(480px 300px at 50% 40%, rgba(206, 181, 249, 0.14), transparent 70%),
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px;
+    -webkit-mask-image: radial-gradient(700px 420px at 50% 45%, #000 30%, transparent 80%);
+    mask-image: radial-gradient(700px 420px at 50% 45%, #000 30%, transparent 80%);
+  }
+  .nf-panel {
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: var(--r-lg);
+    background: linear-gradient(180deg, rgba(30, 33, 38, 0.94), rgba(17, 18, 21, 0.97));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 48px 96px -40px rgba(0, 0, 0, 0.95);
+    overflow: hidden;
+  }
+  .nf-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .nf-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .nf-dots i {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2c3036;
+  }
+  .nf-host {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .nf-body {
+    padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 48px) clamp(36px, 6vw, 52px);
     text-align: center;
   }
   .code {
-    font-size: 72px;
-    font-weight: 800;
-    background: var(--grad);
+    font-family: var(--mono);
+    font-size: clamp(72px, 14vw, 112px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    background: linear-gradient(180deg, #ece2fe, #ceb5f9 55%, #b693f3);
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
-    line-height: 1;
+    -webkit-text-fill-color: transparent;
   }
   h1 {
-    font-size: 28px;
-    margin: 16px 0 12px;
+    font-size: var(--fs-xl);
+    margin: 20px 0 12px;
+  }
+  .nf-body > p:not(.code) {
+    color: var(--muted);
+    max-width: 30em;
+    margin: 0 auto;
+    text-wrap: balance;
   }
   ul {
     list-style: none;
     padding: 0;
-    margin: 28px 0 0;
+    margin: 32px 0 0;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     justify-content: center;
+  }
+  @media (max-width: 479px) {
+    ul li {
+      flex: 1 1 100%;
+    }
+    ul :global(.btn) {
+      width: 100%;
+    }
   }
 </style>

@@ -1,25 +1,30 @@
 ---
-import { NAV, SITE, CONTACTS } from '../config/site';
+import { NAV, SITE, OFFICIAL_HOME, OFFICIAL_PAGE } from '../config/site';
 import Logo from './Logo.astro';
 import ActionLink from './ActionLink.astro';
 
 const onHome = Astro.url.pathname === '/';
 const resolve = (href: string) => (onHome && href.startsWith('/#') ? href.slice(1) : href);
 const year = new Date(SITE.dataUpdated).getFullYear();
+const tutorials = [
+  { href: '/guides/choose-client/', label: '按设备选客户端' },
+  { href: '/guides/clash-subscription/', label: 'Clash 订阅导入' },
+  { href: '/guides/clash-party/', label: 'Clash Party 教程' },
+  { href: '/guides/shadowrocket/', label: '小火箭教程' },
+  { href: '/guides/windows-android-clients/', label: 'v2rayN / v2rayNG 教程' },
+];
 ---
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="brand" href="/">
-        <Logo size={30} gid="lg-logo-footer" />
-        <span>{SITE.brand}</span>
+        <Logo size={32} lazy />
+        <span>{SITE.brand}<span class="f-dot" aria-hidden="true"> · </span><span class="f-role">{SITE.role}</span></span>
       </a>
       <p>
-        灵动云（{SITE.latinName}），又称灵动云机场、灵动云VPN，提供月付、年付与一次性流量包方案。注册、订购与订阅管理请通过官方入口完成。
+        按设备整理灵动云的客户端安装、订阅导入与节点设置教程。注册和购买在用户中心完成，订阅链接请向在线客服领取。
       </p>
-      <ActionLink variant="ghost" size="sm">前往官网</ActionLink>
-      {CONTACTS.telegram && <p><a href={CONTACTS.telegram} rel="noopener noreferrer" target="_blank">Telegram</a></p>}
-      {CONTACTS.email && <p>{CONTACTS.email}</p>}
+      <ActionLink variant="ghost" size="sm">注册 / 登录用户中心</ActionLink>
     </div>
 
     <nav class="footer-col" aria-label="页脚导航">
@@ -32,52 +37,78 @@ const year = new Date(SITE.dataUpdated).getFullYear();
     <div class="footer-col">
       <h2>常用教程</h2>
       <ul>
-        <li><a href="/guides/plan-selection/">套餐怎么选</a></li>
-        <li><a href="/guides/clash-subscription/">Clash 订阅导入</a></li>
-        <li><a href="/guides/shadowrocket/">小火箭使用教程</a></li>
-        <li><a href="/guides/troubleshooting/">订阅与节点排查</a></li>
+        {tutorials.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
       </ul>
     </div>
-
   </div>
 
   <div class="container footer-bottom">
-    <p>
-      本站为灵动云官方网站，套餐订购、支付结算与售后服务均由灵动云官方提供。价格更新于 {SITE.dataUpdated}，实时价格与套餐规则以用户中心显示为准。请在所在地法律法规允许的范围内使用网络服务。
+    <p class="footer-statement">
+      本站是灵动云官方「{SITE.role}」站点。官网：<a href={OFFICIAL_HOME}>lingdongyun.site</a> · <a href={OFFICIAL_PAGE}>官方站点说明</a>
     </p>
-    <p>© {year} 灵动云官网（{SITE.latinName}）· lingdongyun.website</p>
+    <p>价格与套餐规则以用户中心实时显示为准。请在所在地法律法规允许的范围内使用网络服务。</p>
+    <p class="footer-copy">© {year} {SITE.name} · <span class="mono">{SITE.domain}</span></p>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    background: var(--surface);
+    position: relative;
+    background: var(--bg);
     border-top: 1px solid var(--line);
-    padding: 56px 0 28px;
+    padding: 64px 0 32px;
     font-size: 14px;
     color: var(--muted);
+  }
+  /* 顶边一道居中的青色细光 */
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    width: min(640px, 80%);
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(206, 181, 249, 0.55), transparent);
   }
   .footer-grid {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr;
-    gap: 32px;
+    gap: 40px;
   }
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--ink);
-    text-decoration: none;
+    gap: 12px;
+    min-height: 44px;
     margin-bottom: 12px;
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--text);
+  }
+  .f-dot {
+    color: var(--dim);
+  }
+  .f-role {
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 500;
   }
   .footer-brand p {
-    max-width: 340px;
-    margin-bottom: 16px;
+    max-width: 380px;
+    margin-bottom: 20px;
+    line-height: 1.8;
   }
   .footer-col h2 {
-    font-size: 15px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dim);
+    letter-spacing: 0.06em;
     margin-bottom: 12px;
   }
   .footer-col ul {
@@ -85,25 +116,44 @@ const year = new Date(SITE.dataUpdated).getFullYear();
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 2px;
   }
   .footer-col a {
-    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    color: var(--text-2);
     text-decoration: none;
-    display: inline-block;
-    padding: 5px 0;
   }
   .footer-col a:hover {
-    color: var(--brand-ink);
-    text-decoration: underline;
+    color: var(--accent);
   }
   .footer-bottom {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
+    position: relative;
+    margin-top: 48px;
+    padding-top: 24px;
     display: grid;
     gap: 6px;
     font-size: 13px;
+  }
+  /* 分隔线与内容同宽（不含容器左右留白） */
+  .footer-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    right: var(--gutter);
+    height: 1px;
+    background: var(--line);
+  }
+  .footer-statement {
+    color: var(--text-2);
+    font-size: 14px;
+  }
+  .footer-statement a {
+    font-weight: 500;
+  }
+  .footer-copy .mono {
+    font-size: 12.5px;
   }
   @media (max-width: 899px) {
     .footer-grid {
@@ -113,9 +163,20 @@ const year = new Date(SITE.dataUpdated).getFullYear();
       grid-column: 1 / -1;
     }
   }
+  @media (max-width: 959px) {
+    .footer-col a {
+      min-height: 44px;
+    }
+    .footer-statement a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
   @media (max-width: 420px) {
     .footer-grid {
       grid-template-columns: 1fr;
+      gap: 28px;
     }
   }
 </style>

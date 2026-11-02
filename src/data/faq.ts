@@ -1,9 +1,11 @@
 /**
- * 常见问题。answer 为受信任的站内 HTML 片段（可含站内链接），
- * 支持 {{price:id}} 等套餐占位符，价格统一读取 plans.ts。
- * 「{{action}}」会被替换为官方入口链接。
+ * 首页「常见问题」：只回答使用层面的问题（订阅、格式、设备、更新、模式、连接）。
+ * 套餐价格、购买与品牌类问题分别由官网、套餐选择站回答，这里不重复。
+ *
+ * answer 为受信任的站内 HTML 片段（可含链接），支持 {{plancount}} 等套餐占位符；
+ * 「{{action}}」会被替换为用户中心（注册 / 登录）链接。
  */
-import { ACTION_URL } from '../config/site';
+import { ACTION_URL, LINKS } from '../config/site';
 import { fillPlanTokens } from './plans';
 
 export interface FaqItem {
@@ -13,78 +15,55 @@ export interface FaqItem {
 
 const RAW: FaqItem[] = [
   {
-    q: '灵动云是什么？灵动云机场和灵动云VPN 是同一个服务吗？',
+    q: '订阅链接从哪里获取？可以发给别人吗？',
     a: [
-      '灵动云（Lingdongyun）是一个提供网络连接订阅服务的机场品牌。“机场”是中文网络中对代理订阅服务的俗称，用户也常把它叫作灵动云VPN、灵动云梯子或灵动云加速器，指的都是同一个服务。',
-      '购买套餐后，你会获得一条专属订阅链接，导入 Clash、小火箭等客户端即可获取节点并连接。它和企业内网使用的传统 VPN 原理不同，入门概念可以阅读<a href="/guides/network-basics/">灵动云新手入门</a>。',
+      `开通套餐后，在<a href="${LINKS.helpCenter}">帮助中心</a>联系在线客服，或在用户中心提交工单，说明你的设备和客户端，客服会发来对应的订阅链接：Clash Party、Clash Verge Rev、Clash Meta for Android 等 Clash 系客户端用 Clash 订阅链接，v2rayN、v2rayNG 用通用订阅链接，小火箭用小火箭订阅链接。`,
+      '订阅链接里带有与账号绑定的令牌，作用相当于账号凭证，不要发到群里，截图求助时也要打码。万一泄露，可以重置订阅链接，旧链接随之失效；之后向客服领取新链接，每台设备都要换上。',
     ],
   },
   {
-    q: '灵动云官网网址是什么？怎么注册灵动云？',
+    q: 'Clash 订阅和通用订阅有什么区别？该用哪一个？',
     a: [
-      '灵动云官网域名是 lingdongyun.website，官网介绍全部套餐、客户端与使用教程。点击官网上的“立即注册”按钮即可进入{{action}}。',
-      '注册流程很简单：按页面提示完成注册，登录用户中心后选择套餐付款，再复制订阅链接导入客户端。请认准官网与官方入口，不要在来历不明的页面输入账号密码。',
+      'Clash 订阅是一整份配置，节点、代理组和分流规则都在里面，供 Clash Party、Clash Verge Rev、Clash Meta for Android 读取；通用订阅只是一串编码后的节点清单，供 v2rayN、v2rayNG 读取，分流在客户端里设置。',
+      '把 Clash 订阅填进 v2rayN，或把通用订阅导进 Clash，多半会报错或显示空列表，所以先确定客户端，再向客服要对应的那一条。各设备的对照表见<a href="/guides/choose-client/">按设备选客户端</a>。',
     ],
   },
   {
-    q: '灵动云机场多少钱？一共有哪些套餐？',
+    q: '一个账号可以在几台设备上使用？',
     a: [
-      '灵动云共有 {{plancount}} 档套餐。月付 4 档：{{name:fufeng}} {{price:fufeng}}（{{traffic:fufeng}}）、{{name:yulang}} {{price:yulang}}（{{traffic:yulang}}）、{{name:poxiao}} {{price:poxiao}}（{{traffic:poxiao}}）、{{name:lingxiao}} {{price:lingxiao}}（{{traffic:lingxiao}}）。',
-      '年付 1 档：{{name:chuanyun}} {{price:chuanyun}}（{{traffic:chuanyun}}）。不限时流量包 3 档：{{name:xianyun}} {{price:xianyun}}（{{traffic:xianyun}}）、{{name:jingyun}} {{price:jingyun}}（{{traffic:jingyun}}）、{{name:feiyun}} {{price:feiyun}}（{{traffic:feiyun}}）。所有套餐都可以在首页<a href="#plans">套餐区</a>直接对比。',
+      '灵动云套餐不限设备数量，电脑、手机和平板可以分别导入同一个账号的订阅。需要注意两点：所有设备共用同一份套餐流量，设备越多消耗越快；节点调整后，每台设备都要各自更新一次订阅。',
     ],
   },
   {
-    q: '灵动云月付、年付和不限时流量包有什么区别？',
+    q: '订阅多久需要更新一次？',
     a: [
-      '月付套餐按月付费，每月获得固定额度，可以随时根据用量升档或降档，适合刚开始使用、还不确定用量的用户。',
-      '年付套餐{{name:chuanyun}}一次付清全年，流量每月发放 70GB，不是全年共 70GB，折合约 8.25 元/月，适合长期轻量使用。不限时流量包只付一次款，获得一笔总流量，用完为止，不需要每月续费，适合出差、偶尔使用或用量不规律的用户。详细对比见<a href="/guides/plan-selection/">灵动云套餐怎么选</a>。',
+      '节点地址或数量调整后，客户端里的旧配置可能失效，所以订阅需要定期更新。省事的做法是在客户端里开启自动更新，间隔设为一天左右；遇到大面积节点超时，先手动更新一次再判断。',
+      'Clash Party、Clash Verge Rev 在订阅条目的编辑选项里设置更新间隔；小火箭在设置的「订阅」中有自动更新相关选项；v2rayN、v2rayNG 在订阅分组菜单里执行更新。按钮名称以当前版本为准。',
     ],
   },
   {
-    q: '学生党或预算有限，选哪个灵动云套餐最划算？',
+    q: '规则模式和全局模式怎么选？',
     a: [
-      '如果主要用于查资料、通讯和轻度办公，每月用量通常在几十 GB 以内。想先试一个月，选{{name:fufeng}}（{{price:fufeng}}，{{traffic:fufeng}}）；确定长期使用，选年付{{name:chuanyun}}（{{price:chuanyun}}，{{traffic:chuanyun}}），单月成本在全部套餐中最低。',
-      '如果经常看高清视频，建议从{{name:yulang}}起步。不知道自己用多少流量，可以参考<a href="/guides/traffic-budget/">按用途估算流量需求</a>里的计算方法。',
+      '日常使用选规则模式（小火箭里叫「配置」）：国内网站和应用直接连接，其他访问按规则走代理，既不拖慢国内访问，也更省套餐流量。全局模式让所有访问都经过节点，适合临时判断「是不是规则没有命中」；直连模式等于暂时关闭代理。',
+      '某个网站在规则模式下打不开、切到全局后正常，多半是规则没有覆盖它。先更新一次订阅，再在规则模式下重试。',
     ],
   },
   {
-    q: '灵动云支持哪些设备和客户端？',
+    q: '小火箭在 App Store 里搜不到怎么办？',
     a: [
-      '灵动云支持 Windows、macOS、Android 和 iOS 四大平台。常用客户端包括 Clash 系客户端（如 Clash Verge、Clash Party）、iOS 的小火箭 Shadowrocket、Windows 的 v2rayN 以及 Android 的 v2rayNG。',
-      '登录用户中心后，可以找到不同客户端对应的订阅链接。各平台的获取方式与操作要点见首页<a href="#clients">客户端下载与订阅导入</a>，Windows 与 Android 的客户端对比见<a href="/guides/windows-android-clients/">客户端选择指南</a>。',
+      '因为小火箭（Shadowrocket）没有在中国大陆地区的 App Store 上架。在 App Store 的账户页换成其他国家或地区的 Apple ID，再搜索购买即可，价格以商店页面为准。',
+      '换账号只在 App Store 里进行，别改系统设置里的 iCloud 登录；网上的共享账号和来路不明的安装方式都不要用。<a href="/guides/shadowrocket/">小火箭教程</a>里有完整步骤和辨认正版的方法。',
     ],
   },
   {
-    q: '灵动云怎么导入 Clash 或小火箭订阅？',
+    q: '导入成功了，但节点全部超时或网页打不开怎么办？',
     a: [
-      'Clash：在用户中心复制 Clash 订阅链接，打开客户端的“订阅”或“配置”页面，粘贴链接并保存，选中该配置后开启系统代理，再到“代理”页测速选择节点。',
-      '小火箭：复制订阅链接，点右上角加号，类型选 Subscribe，粘贴到 URL 栏保存，更新后选择节点并打开连接开关。完整步骤见<a href="/guides/clash-subscription/">Clash 订阅导入教程</a>与<a href="/guides/shadowrocket/">小火箭使用教程</a>。',
-    ],
-  },
-  {
-    q: '灵动云机场稳定吗？用的是什么线路和协议？',
-    a: [
-      '灵动云采用 BGP 接入，电信、联通、移动用户访问时，路由协议会自动选择较合适的路径，让不同运营商的连接更均衡；传输使用 Shadowsocks（SS）加密协议，轻量且客户端兼容性好。',
-      '网络体验还会受所在地区、运营商和时段影响，建议在晚高峰等常用时段多测试几个节点，选择延迟稳定的节点长期使用。BGP 与专线的区别见<a href="/guides/routes-and-protocols/">灵动云的 BGP 与 SS 是什么</a>。',
-    ],
-  },
-  {
-    q: '灵动云节点超时、订阅更新失败怎么办？',
-    a: [
-      '按顺序排查：先在用户中心确认套餐未到期、流量没有用完；再检查本地网络是否正常；然后把客户端更新到最新版本，并确认使用的是与客户端对应的订阅链接；最后对全部节点测速，换用延迟正常的节点。',
-      '如果仍然无法连接，检查系统代理是否开启、是否有其他代理软件冲突，并把系统时间设为自动同步。完整清单见<a href="/guides/troubleshooting/">订阅更新失败与节点超时排查</a>。订阅链接相当于账号凭证，请不要发给他人。',
-    ],
-  },
-  {
-    q: '灵动云有免费试用吗？怎样低成本体验？',
-    a: [
-      '灵动云官网目前暂未推出免费试用或优惠码活动。想低成本体验，可以先购买月付入门档{{name:fufeng}}（{{price:fufeng}}）用一个月，或选择不限时流量包{{name:xianyun}}，用多少算多少。',
-      '体验时建议在自己常用的设备和网络环境下测试几天，确认速度和可用性符合需要，再决定是否升级到更高档位或改为年付。',
+      `先做三件事：在用户中心确认套餐有效、流量没有用完；手动更新一次订阅；把系统时间设为自动同步。仍然不行，按帮助中心的<a href="${LINKS.troubleshooting}#timeout">排查步骤</a>逐项检查，也可以在<a href="${LINKS.helpCenter}">帮助中心</a>联系在线客服，或在用户中心提交工单。`,
     ],
   },
 ];
 
-const actionLink = `<a href="${ACTION_URL}" target="_blank" rel="noopener noreferrer">灵动云官方入口</a>`;
+const actionLink = `<a href="${ACTION_URL}" target="_blank" rel="noopener">登录用户中心</a>`;
 
 export const FAQS: FaqItem[] = RAW.map((item) => ({
   q: item.q,

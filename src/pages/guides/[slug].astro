@@ -2,10 +2,9 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import PlanTable from '../../components/PlanTable.astro';
 import GuideCard from '../../components/GuideCard.astro';
 import ActionLink from '../../components/ActionLink.astro';
-import { SITE, abs } from '../../config/site';
+import { SITE, ORG_ID, abs } from '../../config/site';
 
 export async function getStaticPaths() {
   const guides = await getCollection('guides', ({ data }) => !data.draft);
@@ -21,7 +20,7 @@ const iso = (dt: Date) => dt.toISOString().slice(0, 10);
 const published = iso(d.pubDate);
 const modified = iso(d.updatedDate ?? d.pubDate);
 
-// 正文中文字数（用于阅读时长估算）
+// 正文汉字数（用于阅读时长估算）
 const body = entry.body ?? '';
 const cjkCount = (body.match(/[一-鿿]/g) || []).length;
 const minutes = Math.max(3, Math.round(cjkCount / 400));
@@ -32,8 +31,8 @@ const related = d.related
 
 const jsonLd = [
   {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': d.schemaType,
+    '@id': abs(`${path}#article`),
     headline: d.title,
     description: d.description,
     inLanguage: SITE.lang,
@@ -42,17 +41,15 @@ const jsonLd = [
     mainEntityOfPage: abs(path),
     url: abs(path),
     image: abs(SITE.ogImage),
-    keywords: d.keywords.join(', '),
-    author: { '@type': 'Organization', name: `${SITE.brand}编辑部`, url: abs('/') },
-    publisher: { '@type': 'Organization', '@id': abs('/#organization'), name: SITE.brand, logo: { '@type': 'ImageObject', url: abs('/apple-touch-icon.png') } },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
     isPartOf: { '@id': abs('/#website') },
   },
   {
-    '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: '首页', item: abs('/') },
-      { '@type': 'ListItem', position: 2, name: '使用教程', item: abs('/guides/') },
+      { '@type': 'ListItem', position: 2, name: '全部教程', item: abs('/guides/') },
       { '@type': 'ListItem', position: 3, name: d.shortTitle, item: abs(path) },
     ],
   },
@@ -68,21 +65,33 @@ const jsonLd = [
   modifiedTime={modified}
 >
   <div class="article-top">
-    <div class="container narrow">
-      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '使用教程', href: '/guides/' }, { label: d.shortTitle }]} />
-      <p class="a-cat">{d.category}</p>
-      <h1>{d.title}</h1>
-      <p class="a-lead">{d.description}</p>
-      <p class="a-meta">
-        <span>发布 <time datetime={published}>{published}</time></span>
-        {modified !== published && <span>更新 <time datetime={modified}>{modified}</time></span>}
-        <span>约 {minutes} 分钟阅读</span>
-        <span>{SITE.brand}编辑部</span>
-      </p>
+    <div class="article-top-bg" aria-hidden="true"></div>
+    <div class="container doc-wrap">
+      <div class="doc-head">
+        <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '全部教程', href: '/guides/' }, { label: d.shortTitle }]} />
+        <p class="a-cat">{d.category}</p>
+        <h1>{d.title}</h1>
+        <p class="a-lead">{d.description}</p>
+        <p class="a-meta">
+          <span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2.5 4h11v9.5h-11zM2.5 7h11M5.5 2.5v3M10.5 2.5v3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            更新于 <time datetime={modified}>{modified}</time>
+          </span>
+          {modified !== published && <span>首次发布 <time datetime={published}>{published}</time></span>}
+          <span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM8 5v3.2l2 1.3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            约 {minutes} 分钟阅读
+          </span>
+          <span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 3h4.5A1.5 1.5 0 0 1 9 4.5V13a1 1 0 0 0-1-1H3zM13 3H10.5A1.5 1.5 0 0 0 9 4.5V13a1 1 0 0 1 1-1h3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" /></svg>
+            {SITE.name}
+          </span>
+        </p>
+      </div>
     </div>
   </div>
 
-  <div class="container article-layout">
+  <div class="container doc-wrap article-layout">
     {toc.length > 0 && (
       <aside class="toc" aria-labelledby="toc-title">
         <details open>
@@ -96,33 +105,30 @@ const jsonLd = [
 
     <article class="prose">
       <Content />
-      {d.showPlanTable && (
-        <>
-          <h2 id="plan-table">附：灵动云套餐对照表</h2>
-          <PlanTable />
-        </>
-      )}
 
       <div class="a-cta">
-        <div>
-          <p class="a-cta-title">在官方入口完成注册与订购</p>
-          <p>套餐、订阅链接与客户端说明均在用户中心提供。</p>
+        <span class="a-cta-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5V20h3.5v-2h2v-2h2l1.7-1.7a4.5 4.5 0 1 0 1.3-9.8zM16 8.5h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </span>
+        <div class="a-cta-body">
+          <p class="a-cta-title">订阅链接找客服领取</p>
+          <p>开通套餐后，到帮助中心联系在线客服或在用户中心提交工单，说明设备和客户端，就能拿到对应的订阅链接；还没有账号可以先注册。</p>
         </div>
-        <ActionLink>前往官网</ActionLink>
+        <ActionLink>注册 / 登录用户中心</ActionLink>
       </div>
 
-      <nav class="back-links" aria-label="返回首页区域">
-        <a href="/#plans">查看全部套餐</a>
-        <a href="/#clients">客户端与快速开始</a>
-        <a href="/#faq">常见问题</a>
+      <nav class="back-links" aria-label="继续浏览">
+        <a href="/#devices">按设备选教程</a>
+        <a href="/#import">订阅导入三步</a>
         <a href="/guides/">全部教程</a>
+        <a href="/#faq">常见问题</a>
       </nav>
     </article>
   </div>
 
   {related.length > 0 && (
     <section class="related" aria-labelledby="related-title">
-      <div class="container">
+      <div class="container doc-wrap">
         <h2 id="related-title">相关教程</h2>
         <div class="related-grid">
           {related.map((g) => (
@@ -141,234 +147,547 @@ const jsonLd = [
   )}
 </BaseLayout>
 
-<style>
-  .narrow {
-    max-width: calc(860px + var(--gutter) * 2);
+<script>
+  // 目录高亮：滚动时把当前所在章节标为 aria-current（只是增强，不影响内容显示）
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]'));
+  const pairs = links
+    .map((a) => ({ a, el: document.getElementById(decodeURIComponent(a.hash.slice(1))) }))
+    .filter((p): p is { a: HTMLAnchorElement; el: HTMLElement } => p.el !== null);
+  if (pairs.length) {
+    let current: HTMLAnchorElement | null = null;
+    let queued = false;
+    const update = () => {
+      queued = false;
+      let active: HTMLAnchorElement | null = null;
+      for (const p of pairs) {
+        if (p.el.getBoundingClientRect().top <= 140) active = p.a;
+        else break;
+      }
+      if (active !== current) {
+        current?.removeAttribute('aria-current');
+        active?.setAttribute('aria-current', 'true');
+        current = active;
+      }
+    };
+    const onScroll = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
   }
+</script>
+
+<style>
+  .doc-wrap {
+    max-width: calc(1120px + var(--gutter) * 2);
+  }
+
+  /* —— 页头 —— */
   .article-top {
-    background:
-      radial-gradient(520px 220px at 90% 0%, rgba(120, 140, 255, 0.08), transparent 70%),
-      linear-gradient(180deg, #faf8ff, #fff);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 24px 0 44px;
     border-bottom: 1px solid var(--line);
-    padding: 28px 0 32px;
+  }
+  .article-top-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(560px 260px at 88% 0%, rgba(206, 181, 249, 0.13), transparent 70%),
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  }
+  .doc-head {
+    max-width: 760px;
   }
   .a-cat {
-    display: inline-block;
-    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding: 3px 10px;
+    border-radius: var(--r-xs);
     font-size: 13px;
-    font-weight: 600;
-    color: var(--brand-ink);
-    background: var(--tint);
-    border-radius: 999px;
-    padding: 2px 12px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(206, 181, 249, 0.25);
+  }
+  .a-cat::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: currentColor;
   }
   h1 {
-    font-size: clamp(26px, 4vw, 38px);
-    margin: 12px 0 14px;
-    line-height: 1.35;
+    margin: 16px 0 16px;
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
   }
   .a-lead {
     font-size: 17px;
-    color: var(--text);
+    color: var(--muted);
+    line-height: 1.85;
   }
   .a-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 18px;
-    margin-top: 14px;
-    font-size: 14px;
-    color: var(--muted);
+    gap: 8px 22px;
+    margin-top: 22px;
+    font-size: 13.5px;
+    color: var(--dim);
   }
+  .a-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .a-meta svg {
+    color: var(--accent);
+    opacity: 0.8;
+  }
+  .a-meta time {
+    color: var(--text-2);
+    font-size: 13px;
+  }
+
+  /* —— 正文 + 右侧目录 —— */
   .article-layout {
     display: grid;
-    grid-template-columns: 240px minmax(0, 760px);
-    justify-content: center;
-    gap: 48px;
-    padding-top: 36px;
-    padding-bottom: 56px;
+    grid-template-columns: minmax(0, 720px) 232px;
+    grid-template-areas: 'article toc';
+    justify-content: space-between;
+    column-gap: 56px;
+    padding-top: 48px;
+    padding-bottom: 88px;
+  }
+  .prose {
+    grid-area: article;
+    min-width: 0;
   }
   .toc {
+    grid-area: toc;
     position: sticky;
-    top: 92px;
+    top: calc(var(--header-h) + 32px);
     align-self: start;
-    font-size: 14px;
+    max-height: calc(100vh - var(--header-h) - 64px);
+    overflow-y: auto;
+    font-size: 13.5px;
   }
   .toc summary {
-    font-weight: 700;
-    color: var(--ink);
-    cursor: pointer;
-    padding: 6px 0;
     list-style: none;
+    padding: 2px 0 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+    cursor: pointer;
   }
   .toc summary::-webkit-details-marker {
     display: none;
   }
   .toc ol {
-    margin: 6px 0 0;
-    padding: 0 0 0 14px;
-    border-left: 2px solid var(--line);
-    display: grid;
-    gap: 2px;
     list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--line);
+    display: grid;
   }
   .toc a {
     display: block;
-    padding: 5px 0;
-    color: var(--text);
+    margin-left: -1px;
+    padding: 6px 0 6px 16px;
+    border-left: 1px solid transparent;
+    color: var(--muted);
+    line-height: 1.55;
     text-decoration: none;
-    line-height: 1.5;
+    transition: color 0.15s ease, border-color 0.15s ease;
   }
   .toc a:hover {
-    color: var(--brand-ink);
+    color: var(--text);
+    border-left-color: var(--line-strong);
   }
+  .toc a[aria-current='true'] {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* —— 正文排版（文档风格） —— */
   .prose {
-    min-width: 0;
     font-size: 16.5px;
     line-height: 1.9;
-    color: #34354b;
+    color: var(--text-2);
   }
-  .prose :global(h2) {
-    font-size: 23px;
-    margin: 40px 0 14px;
-    padding-top: 4px;
-  }
-  .prose :global(h2:first-child) {
+  .prose > :global(*:first-child) {
     margin-top: 0;
   }
+  .prose :global(h2) {
+    position: relative;
+    margin: 64px 0 18px;
+    font-size: 24px;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
   .prose :global(h3) {
+    margin: 36px 0 12px;
     font-size: 19px;
-    margin: 28px 0 10px;
+    line-height: 1.45;
   }
   .prose :global(p) {
-    margin: 0 0 16px;
-  }
-  .prose :global(ul),
-  .prose :global(ol) {
     margin: 0 0 18px;
-    padding-left: 1.4em;
-  }
-  .prose :global(li) {
-    margin: 4px 0;
   }
   .prose :global(strong) {
-    color: var(--ink);
-  }
-  .prose :global(blockquote) {
-    margin: 20px 0;
-    padding: 12px 18px;
-    background: var(--tint);
-    border-left: 3px solid var(--brand);
-    border-radius: 0 10px 10px 0;
     color: var(--text);
+    font-weight: 600;
+  }
+  .prose :global(a:not(.btn)) {
+    color: var(--accent);
+  }
+  .prose :global(a:not(.btn):hover) {
+    color: var(--accent-hi);
+  }
+  .prose :global(hr) {
+    border: 0;
+    height: 1px;
+    margin: 40px 0;
+    background: var(--line);
+  }
+  /* 无序列表：青绿色小方点 */
+  .prose :global(ul) {
+    list-style: none;
+    margin: 8px 0 24px;
+    padding: 0;
+  }
+  .prose :global(ul > li) {
+    position: relative;
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+  .prose :global(ul > li::before) {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0.8em;
+    width: 6px;
+    height: 6px;
+    border-radius: 1.5px;
+    background: var(--accent-2);
+  }
+  /* 有序列表：编号方块 + 竖向连接线，像操作步骤 */
+  .prose :global(ol) {
+    list-style: none;
+    counter-reset: step;
+    margin: 8px 0 24px;
+    padding: 0;
+  }
+  .prose :global(ol > li) {
+    counter-increment: step;
+    position: relative;
+    margin: 0;
+    padding: 1px 0 16px 46px;
+  }
+  .prose :global(ol > li::before) {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 2px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.32);
+  }
+  .prose :global(ol > li:not(:last-child)::after) {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 33px;
+    bottom: -1px;
+    width: 1px;
+    background: linear-gradient(rgba(206, 181, 249, 0.35), rgba(255, 255, 255, 0.06));
+  }
+  .prose :global(ol > li:last-child) {
+    padding-bottom: 0;
+  }
+  /* 行内代码 */
+  .prose :global(code) {
+    font-size: max(0.84em, 12.5px);
+    color: #ece2fe;
+    background: rgba(206, 181, 249, 0.07);
+    border: 1px solid rgba(206, 181, 249, 0.18);
+    border-radius: var(--r-xs);
+    padding: 0.12em 0.45em;
+    overflow-wrap: anywhere;
+  }
+  .prose :global(pre) {
+    margin: 24px 0;
+    padding: 16px 18px;
+    border-radius: var(--r);
+    background: var(--well);
+    border: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  .prose :global(pre code) {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text-2);
+  }
+  /* 引用：提示框样式 */
+  .prose :global(blockquote) {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    border-left: 2px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--text-2);
   }
   .prose :global(blockquote p:last-child) {
     margin-bottom: 0;
   }
-  .prose :global(code) {
-    font-family: var(--mono);
-    font-size: 0.9em;
-    background: var(--surface);
+  /* 表格：外层容器负责圆角与横向滚动 */
+  .prose :global(.table-wrap) {
+    margin: 24px 0 32px;
+    overflow-x: auto;
+    border-radius: var(--r);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 1px 6px;
+    background: var(--bg-band);
+  }
+  .prose :global(.table-wrap:focus-visible) {
+    outline-offset: 2px;
   }
   .prose :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0 24px;
-    font-size: 15px;
-    display: block;
-    overflow-x: auto;
+    font-size: 14.5px;
+    line-height: 1.65;
   }
   .prose :global(th),
   .prose :global(td) {
-    border: 1px solid var(--line);
-    padding: 8px 12px;
+    padding: 12px 16px;
     text-align: left;
     vertical-align: top;
+    border-bottom: 1px solid var(--line);
   }
   .prose :global(thead th) {
-    background: var(--surface);
-    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
   }
+  .prose :global(tbody tr:last-child td) {
+    border-bottom: 0;
+  }
+  .prose :global(tbody tr:hover td) {
+    background: rgba(206, 181, 249, 0.03);
+  }
+  .prose :global(td code) {
+    white-space: nowrap;
+  }
+
+  /* —— 文末提示框 —— */
   .a-cta {
-    margin: 40px 0 24px;
-    padding: 22px 24px;
-    border-radius: 16px;
-    background: var(--tint);
-    border: 1px solid #e7defe;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 16px 18px;
+    margin: 56px 0 24px;
+    padding: 20px 22px;
+    border-radius: var(--r);
+    background: linear-gradient(90deg, rgba(206, 181, 249, 0.08), rgba(206, 181, 249, 0.02));
+    border: 1px solid rgba(206, 181, 249, 0.25);
+  }
+  .a-cta-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.3);
+    align-self: start;
   }
   .a-cta p {
     margin: 0;
-    font-size: 15px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--muted);
   }
   .a-cta .a-cta-title {
-    font-weight: 700;
-    color: var(--ink);
-    font-size: 17px;
+    margin-bottom: 2px;
+    font-size: 16.5px;
+    font-weight: 600;
+    color: var(--text);
   }
   .back-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
   .back-links a {
     display: inline-flex;
     align-items: center;
     min-height: 40px;
     padding: 0 14px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 14.5px;
+    color: var(--text-2);
     text-decoration: none;
-    font-size: 15px;
-    color: var(--text);
+    transition: border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
   }
   .back-links a:hover {
-    border-color: #cbbdf8;
-    color: var(--brand-ink);
+    color: var(--text);
+    border-color: rgba(206, 181, 249, 0.45);
+    box-shadow: 0 8px 24px -14px rgba(206, 181, 249, 0.6);
   }
+
+  /* —— 相关教程 —— */
   .related {
-    background: var(--surface);
+    padding: 64px 0 80px;
+    background: var(--bg-band);
     border-top: 1px solid var(--line);
-    padding: 48px 0 56px;
   }
   .related h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    font-size: var(--fs-xl);
   }
   .related-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
+    gap: 16px;
   }
-  @media (max-width: 959px) {
+
+  /* 宽屏：二级标题前悬挂一个淡青色 # */
+  @media (min-width: 1200px) {
+    .prose :global(h2::before) {
+      content: '#';
+      content: '#' / '';
+      position: absolute;
+      left: -1.05em;
+      top: 0;
+      font-family: var(--mono);
+      font-weight: 400;
+      color: rgba(206, 181, 249, 0.45);
+    }
+  }
+  @media (max-width: 1099px) {
     .article-layout {
       grid-template-columns: minmax(0, 1fr);
-      gap: 20px;
-      padding-top: 24px;
+      grid-template-areas:
+        'toc'
+        'article';
+      row-gap: 28px;
+      padding-top: 28px;
+    }
+    .prose {
+      max-width: 720px;
     }
     .toc {
       position: static;
-      background: var(--surface);
+      max-height: none;
+      max-width: 720px;
+      padding: 0 16px;
+      border-radius: var(--r);
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 8px 16px;
+      background: var(--bg-band);
+    }
+    .toc summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding: 0;
+      font-size: 14px;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .toc summary::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid var(--muted);
+      border-bottom: 1.5px solid var(--muted);
+      transform: translateY(-2px) rotate(45deg);
+      transition: transform 0.2s ease;
+    }
+    .toc details[open] summary::after {
+      transform: translateY(2px) rotate(-135deg);
+    }
+    .toc ol {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      padding: 4px 0 8px;
+    }
+    .toc a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 4px 0;
+      margin: 0;
+      border-left: 0;
+    }
+    .toc a[aria-current='true'] {
+      border-left: 0;
     }
     .related-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   @media (max-width: 639px) {
     .prose {
       font-size: 16px;
+      line-height: 1.85;
+    }
+    .prose :global(h2) {
+      margin-top: 48px;
+      font-size: 21px;
+    }
+    .prose :global(h3) {
+      font-size: 18px;
+    }
+    .prose :global(th),
+    .prose :global(td) {
+      padding: 10px;
+    }
+    .prose :global(thead th) {
+      white-space: normal;
+    }
+    .prose :global(table) {
+      font-size: 14px;
+    }
+    .a-cta {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 18px;
     }
     .a-cta :global(.btn) {
+      grid-column: 1 / -1;
       width: 100%;
+    }
+    .back-links a {
+      min-height: 44px;
     }
   }
 </style>

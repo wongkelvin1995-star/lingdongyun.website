@@ -2,22 +2,40 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import GuideCard from '../../components/GuideCard.astro';
-import { SITE, abs } from '../../config/site';
+import { SITE, LINKS, abs } from '../../config/site';
+import { DEVICES, GENERAL_GUIDES } from '../../data/devices';
 
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
-const title = `灵动云使用教程：套餐选择、订阅导入与排查（${guides.length} 篇）｜${SITE.name}`;
-const description = `灵动云（灵动云机场 · Lingdongyun）使用教程目录，共 ${guides.length} 篇：套餐与流量选择、Clash 与小火箭订阅导入、Windows 与 Android 客户端、线路与协议概念、订阅更新失败与节点超时排查。`;
+const bySlug = new Map(guides.map((g) => [g.id, g]));
+
+// 构建期校验：devices.ts 引用的文章必须存在，每篇文章至少出现在一个分组里
+const listed = new Set([...DEVICES.flatMap((d) => d.guides.map((g) => g.slug)), ...GENERAL_GUIDES.map((g) => g.slug)]);
+for (const slug of listed) if (!bySlug.has(slug)) throw new Error(`devices.ts 引用了不存在的教程：${slug}`);
+for (const g of guides) if (!listed.has(g.id)) throw new Error(`教程 ${g.id} 还没有加入 src/data/devices.ts 的任何分组`);
+
+// 分组图标（装饰）：通用分组用一本书，其余沿用 devices.ts 的设备图标
+const BOOK_ICON = 'M12 6.5C10.5 5 8 4.5 3.5 4.5v13c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-13c-4.5 0-7 .5-8.5 2zM12 6.5v13';
+const groups = [
+  { id: 'general', title: '先读这两篇', clients: '', hint: '还没装客户端，或者对订阅、节点这些词不熟悉，先从这里开始。', icon: BOOK_ICON, items: GENERAL_GUIDES },
+  ...DEVICES.map((d) => ({ id: d.id, title: d.title, clients: d.clients, hint: d.hint, icon: d.icon, items: d.guides })),
+].map((grp) => ({
+  ...grp,
+  items: grp.items.map((it) => ({ ...it, entry: bySlug.get(it.slug)! })),
+}));
+
+const title = `全部教程：按设备查找客户端与订阅导入步骤｜${SITE.name}`;
+const description = `灵动云使用指南的全部 ${guides.length} 篇教程，按 Windows、macOS、Android、iPhone 与 iPad 分组列出，并注明每台设备该看哪一篇；先读两篇通用说明，再按设备完成客户端安装、订阅导入、节点切换和日常设置。`;
 
 const jsonLd = [
   {
-    '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: '灵动云使用教程',
+    '@id': abs('/guides/#collection'),
+    name: '灵动云教程目录',
     description,
     url: abs('/guides/'),
     inLanguage: SITE.lang,
     isPartOf: { '@id': abs('/#website') },
+    dateModified: SITE.dataUpdated,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: guides.map((g, i) => ({
@@ -29,42 +47,70 @@ const jsonLd = [
     },
   },
   {
-    '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: '首页', item: abs('/') },
-      { '@type': 'ListItem', position: 2, name: '使用教程', item: abs('/guides/') },
+      { '@type': 'ListItem', position: 2, name: '全部教程', item: abs('/guides/') },
     ],
   },
 ];
 ---
 <BaseLayout title={title} description={description} path="/guides/" jsonLd={jsonLd}>
   <div class="g-top">
+    <div class="g-top-bg" aria-hidden="true"></div>
     <div class="container">
-      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '使用教程' }]} />
-      <h1>灵动云使用教程</h1>
-      <p>共 {guides.length} 篇原创文章。建议新用户按顺序阅读：先选套餐，再了解概念，然后按设备导入订阅，遇到问题时查看排查清单。</p>
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '全部教程' }]} />
+      <h1>灵动云教程目录：按设备查找</h1>
+      <p class="g-intro">
+        这里按设备列出灵动云使用指南的全部 {guides.length} 篇教程。先找到你的设备，再打开对应教程；还没装客户端的，先看「先读这两篇」。
+      </p>
+      <nav class="g-jump" aria-label="跳到设备分组">
+        <ul>
+          {groups.map((grp) => <li><a href={`#${grp.id}`}>{grp.id === 'general' ? '先读这两篇' : grp.title}</a></li>)}
+        </ul>
+      </nav>
     </div>
   </div>
+
   <div class="container g-body">
-    <ol class="g-list">
-      {guides.map((g) => (
-        <li>
-          <GuideCard
-            slug={g.id}
-            title={g.data.title}
-            shortTitle={g.data.title}
-            description={g.data.description}
-            category={g.data.category}
-            date={g.data.updatedDate ?? g.data.pubDate}
-            headingLevel="h2"
-          />
-        </li>
+    <div class="g-groups">
+      {groups.map((grp) => (
+        <section class="g-group" id={grp.id} aria-labelledby={`${grp.id}-title`}>
+          <div class="g-head">
+            <span class="g-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d={grp.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <h2 id={`${grp.id}-title`}>{grp.title}</h2>
+            {grp.clients && <p class="g-clients">常用客户端：{grp.clients}</p>}
+            <p class="g-hint">{grp.hint}</p>
+          </div>
+          <ul class="g-items">
+            {grp.items.map((it) => (
+              <li class="g-item">
+                <p class="g-cat">{it.entry.data.category}</p>
+                <h3><a href={`/guides/${it.slug}/`}>{it.entry.data.title}</a></h3>
+                <p class="g-note">{it.note}</p>
+                <svg class="g-arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </li>
+            ))}
+          </ul>
+        </section>
       ))}
-    </ol>
+    </div>
+
+    <div class="g-help">
+      <span class="g-help-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7.5v5.5M12 16.5v.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </span>
+      <p>
+        <strong>照着教程导入后还是连不上？</strong>
+        订阅更新失败、节点超时或速度慢，帮助中心有<a href={LINKS.troubleshooting}>按症状整理的排查步骤</a>，照着逐项检查即可。
+      </p>
+    </div>
+
     <p class="g-back">
-      <a href="/#plans">查看套餐价格</a>
-      <a href="/#clients">客户端与快速开始</a>
+      <a href="/#devices">首页：按设备选教程</a>
+      <a href="/#import">订阅导入三步</a>
       <a href="/#faq">常见问题</a>
     </p>
   </div>
@@ -72,56 +118,279 @@ const jsonLd = [
 
 <style>
   .g-top {
-    background: linear-gradient(180deg, #faf8ff, #fff);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 24px 0 44px;
     border-bottom: 1px solid var(--line);
-    padding: 28px 0 36px;
+  }
+  .g-top-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(560px 260px at 88% 0%, rgba(206, 181, 249, 0.13), transparent 70%),
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 56px 56px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
   }
   h1 {
-    font-size: clamp(28px, 4vw, 40px);
-    margin: 22px 0 12px;
+    margin: 32px 0 16px;
+    font-size: var(--fs-3xl);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
-  .g-top p {
-    max-width: 720px;
+  .g-intro {
+    max-width: 44em;
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  /* 分组跳转：一条分段式导航 */
+  .g-jump ul {
+    list-style: none;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 28px 0 0;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: rgba(14, 15, 17, 0.8);
+  }
+  .g-jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .g-jump a:hover {
+    color: var(--text);
+    background: rgba(206, 181, 249, 0.08);
   }
   .g-body {
-    padding-top: 36px;
-    padding-bottom: 64px;
+    padding-top: 24px;
+    padding-bottom: 88px;
   }
-  .g-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .g-groups {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
   }
-  .g-list > li {
+  .g-group {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 24px 56px;
+    padding: 40px 0;
+  }
+  .g-group + .g-group {
+    border-top: 1px solid var(--line);
+  }
+  .g-head {
+    align-self: start;
+  }
+  .g-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    color: var(--accent);
+    background: radial-gradient(circle at 50% 25%, rgba(206, 181, 249, 0.18), rgba(206, 181, 249, 0.03) 70%), var(--well);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.28);
+  }
+  .g-head h2 {
+    margin-bottom: 10px;
+    font-size: var(--fs-xl);
+  }
+  .g-clients {
+    margin-bottom: 8px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .g-hint {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .g-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .g-item {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    padding: 18px 56px 18px 20px;
+    border-radius: var(--r);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .g-item:hover,
+  .g-item:focus-within {
+    border-color: rgba(206, 181, 249, 0.32);
+    box-shadow: var(--glow);
+  }
+  .g-cat {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
+  .g-item h3 {
+    font-size: 17px;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .g-item h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .g-item h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .g-item h3 a:focus-visible {
+    outline: none;
+  }
+  .g-item h3 a:focus-visible::after {
+    outline: 2px solid var(--accent-hi);
+    outline-offset: -2px;
+  }
+  .g-item:hover h3 a {
+    color: var(--accent-hi);
+  }
+  .g-note {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .g-arrow {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    margin-top: -8px;
+    color: var(--dim);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .g-item:hover .g-arrow,
+  .g-item:focus-within .g-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  .g-help {
     display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 20px 22px;
+    border-radius: var(--r);
+    background: linear-gradient(90deg, rgba(206, 181, 249, 0.08), rgba(206, 181, 249, 0.02));
+    border: 1px solid rgba(206, 181, 249, 0.25);
   }
-  .g-list > li > :global(*) {
-    flex: 1;
+  .g-help-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.3);
+  }
+  .g-help p {
+    color: var(--muted);
+    line-height: 1.8;
+    align-self: center;
+  }
+  .g-help strong {
+    display: block;
+    color: var(--text);
+    font-weight: 600;
   }
   .g-back {
-    margin-top: 32px;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
+    margin-top: 24px;
   }
   .g-back a {
     display: inline-flex;
     align-items: center;
-    min-height: 42px;
+    min-height: 44px;
     padding: 0 16px;
+    border-radius: var(--r-sm);
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 14.5px;
+    color: var(--text-2);
     text-decoration: none;
   }
   .g-back a:hover {
-    background: var(--tint);
+    color: var(--text);
+    border-color: rgba(206, 181, 249, 0.45);
   }
-  @media (max-width: 767px) {
-    .g-list {
-      grid-template-columns: 1fr;
+  @media (max-width: 899px) {
+    .g-group {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 32px 0;
+    }
+    .g-head {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      column-gap: 14px;
+      align-items: center;
+    }
+    .g-icon {
+      grid-row: 1;
+      margin-bottom: 0;
+    }
+    .g-head h2 {
+      grid-row: 1;
+      margin-bottom: 0;
+    }
+    .g-clients,
+    .g-hint {
+      grid-column: 1 / -1;
+    }
+    .g-clients {
+      margin-top: 14px;
+    }
+    .g-hint {
+      margin-top: 12px;
+    }
+    .g-clients + .g-hint {
+      margin-top: 0;
+    }
+  }
+  @media (max-width: 639px) {
+    .g-jump ul {
+      display: flex;
+    }
+    .g-jump a {
+      min-height: 44px;
+      padding: 0 12px;
+    }
+    .g-item {
+      padding: 16px 44px 16px 16px;
+    }
+    .g-arrow {
+      right: 14px;
     }
   }
 </style>

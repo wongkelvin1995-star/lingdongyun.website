@@ -1,0 +1,210 @@
+---
+/** 首页「订阅导入三步」：所有客户端通用的流程，各客户端的按钮位置放在小字里 */
+import ActionLink from '../ActionLink.astro';
+import { LINKS } from '../../config/site';
+
+const steps = [
+  {
+    title: '向客服领取订阅链接',
+    text: '确认套餐有效后，在帮助中心联系在线客服或在用户中心提交工单，说明设备和客户端，客服会发来对应的链接。',
+    details: ['Clash 系客户端：Clash 订阅链接', 'v2rayN / v2rayNG：通用订阅链接', '小火箭：小火箭订阅链接'],
+  },
+  {
+    title: '导入客户端',
+    text: '打开客户端的订阅（或配置）页面，粘贴链接并保存，等待节点列表下载完成。',
+    details: ['Clash Party：订阅管理 → 导入', '小火箭：右上角 ＋ → 类型选 Subscribe', 'v2rayN / v2rayNG：订阅分组设置 → 添加'],
+  },
+  {
+    title: '选节点并连接',
+    text: '测试延迟后选一个数值正常的节点，打开系统代理或 VPN 开关，日常保持规则模式。',
+    details: ['打开常用网站确认能正常访问', '之后定期更新订阅，节点变动时自动同步'],
+  },
+];
+
+/** 「客户端：位置」拆成两段着色，文字不变 */
+const split = (s: string) => {
+  const i = s.indexOf('：');
+  return i > 0 ? { k: s.slice(0, i), v: s.slice(i + 1) } : { k: '', v: s };
+};
+---
+<section class="section" id="import" aria-labelledby="import-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">订阅导入三步</p>
+      <h2 id="import-title">任何客户端，导入订阅都是这三步</h2>
+      <p>不同客户端的按钮名称和位置不一样，但流程相同：向客服领取订阅链接，导入客户端，选节点并连接。</p>
+    </div>
+    <ol class="import-steps">
+      {steps.map((s, i) => (
+        <li class="card step">
+          <span class="step-n" aria-hidden="true">{i + 1}</span>
+          <h3><span class="visually-hidden">第 {i + 1} 步：</span>{s.title}</h3>
+          <p class="step-text">{s.text}</p>
+          <ul class="step-details">
+            {s.details.map((d) => {
+              const { k, v } = split(d);
+              return (
+                <li>
+                  {k && <><span class="d-k">{k}</span><span class="d-sep">：</span></>}
+                  <span class="d-v">{v}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </li>
+      ))}
+    </ol>
+    <div class="import-foot">
+      <span class="foot-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5V20h3.5v-2h2v-2h2l1.7-1.7a4.5 4.5 0 1 0 1.3-9.8zM16 8.5h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </span>
+      <p>订阅链接由客服发放：开通套餐后，到<a href={LINKS.helpCenter}>帮助中心</a>联系在线客服即可领取。还没有账号的，先注册并开通套餐。</p>
+      <ActionLink variant="ghost">注册 / 登录用户中心</ActionLink>
+    </div>
+  </div>
+</section>
+
+<style>
+  .import-steps {
+    position: relative;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    counter-reset: none;
+  }
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 22px 22px;
+    min-width: 0;
+  }
+  /* 步骤之间的流动连接线（在编号的高度上） */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 42px;
+    right: -17px;
+    width: 18px;
+    height: 1px;
+    z-index: 2;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 4px, transparent 4px 8px);
+    background-size: 8px 1px;
+    animation: step-flow 0.8s linear infinite;
+  }
+  @keyframes step-flow {
+    to {
+      background-position: 8px 0;
+    }
+  }
+  .step-n {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.35), 0 0 22px -6px rgba(206, 181, 249, 0.55);
+  }
+  .step h3 {
+    font-size: var(--fs-lg);
+    margin-top: 4px;
+  }
+  .step-text {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  /* 代码块式的细节 */
+  .step-details {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 14px 16px;
+    border-radius: var(--r-sm);
+    background: var(--well);
+    border: 1px solid var(--line);
+    display: grid;
+    gap: 6px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .step-details li {
+    position: relative;
+    padding-left: 16px;
+  }
+  .step-details li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 1px;
+    background: var(--dim);
+  }
+  .d-k {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+  }
+  .d-sep {
+    color: var(--dim);
+  }
+  .import-foot {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 20px;
+    padding: 18px 20px;
+    border-radius: var(--r);
+    background: linear-gradient(90deg, rgba(206, 181, 249, 0.07), rgba(206, 181, 249, 0.015));
+    border: 1px solid rgba(206, 181, 249, 0.22);
+  }
+  .foot-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(206, 181, 249, 0.3);
+  }
+  .import-foot p {
+    flex: 1 1 360px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  @media (max-width: 899px) {
+    .import-steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .step:not(:last-child)::after {
+      top: auto;
+      bottom: -13px;
+      right: auto;
+      left: 39px;
+      width: 1px;
+      height: 14px;
+      background: repeating-linear-gradient(180deg, var(--accent) 0 4px, transparent 4px 8px);
+      background-size: 1px 8px;
+      animation: none;
+    }
+  }
+  @media (max-width: 639px) {
+    .import-foot :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>
