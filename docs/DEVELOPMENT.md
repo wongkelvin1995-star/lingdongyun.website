@@ -68,3 +68,7 @@ scripts/make-images.py    重新生成 OG 图与图标（需 Python playwright�
 - `dist/404.html` 会被 Cloudflare Pages 自动用作 404 页面并返回 404 状态码（已在本地 `astro preview` 验证为 404）。
 - Cloudflare Pages 默认会把 `/guides` 重定向到 `/guides/`；`astro preview` 本地不做这个重定向，访问 `/guides` 会显示 404，属正常现象。
 - 正式域名绑定、仓库与发布权限尚未提供，本项目只完成了本地构建，**未部署**。
+
+## 站点独立性（v4）
+
+本站与其他灵动云域名完全分开：不放跨站导航、站点名录、正文链接、跳转（`public/_redirects` 无跳转规则）或结构化数据引用。`npm run build && npm run verify` 会断言 `dist/` 内零姊妹域名引用；新增内容时不要再链接其他灵动云域名。

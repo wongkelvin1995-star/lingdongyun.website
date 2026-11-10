@@ -9,7 +9,7 @@ order: 1
 related: [clash-party, shadowrocket, windows-android-clients]
 ---
 
-先说结论：**Windows 和 macOS 用 Clash Party**（也可以用 Clash Verge Rev），Windows 上习惯节点列表界面的也可以用 **v2rayN**；**Android 用 v2rayNG 或 Clash Meta for Android**；**iPhone 和 iPad 用小火箭（Shadowrocket）**。决定用哪个，先看它读取哪种订阅格式，再看你更习惯规则分流还是节点列表。选定之后，把设备和客户端告诉[帮助中心](https://lingdongyun.sbs/)的在线客服，就能领到对应的订阅链接。
+先说结论：**Windows 和 macOS 用 Clash Party**（也可以用 Clash Verge Rev），Windows 上习惯节点列表界面的也可以用 **v2rayN**；**Android 用 v2rayNG 或 Clash Meta for Android**；**iPhone 和 iPad 用小火箭（Shadowrocket）**。决定用哪个，先看它读取哪种订阅格式，再看你更习惯规则分流还是节点列表。选定之后，把设备和客户端告诉客服（在用户中心提交工单），就能领到对应的订阅链接。
 
 ## 设备、客户端与订阅格式对照
 
@@ -73,7 +73,7 @@ iPhone 和 iPad 上常用 **小火箭（Shadowrocket）**。它在 App Store 是
 ## 多台设备一起用要注意什么
 
 - **设备数量**：灵动云套餐不限设备数量，电脑、手机、平板可以分别导入同一个账号的订阅；
-- **流量共用**：所有设备共用同一份套餐流量，设备越多消耗越快，估算用量可以参考套餐选择站的[每月流量估算](https://lingdongyun.best/guides/estimate-traffic)；
+- **流量共用**：所有设备共用同一份套餐流量，设备越多消耗越快，可以先按自己的日常用途估一估每月用量，再在用户中心选套餐；
 - **分别更新**：节点调整后，每台设备都要各自更新一次订阅；
 - **保护链接**：每台设备导入的都是你账号专属、带令牌的链接，不要为了方便发给别人。
 

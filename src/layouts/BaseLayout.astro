@@ -3,9 +3,8 @@
 import '@fontsource/spline-sans-mono/latin-400.css';
 import '@fontsource/spline-sans-mono/latin-500.css';
 import '../styles/global.css';
-import { SITE, ORG_ID, OFFICIAL_HOME, abs } from '../config/site';
+import { SITE, ORG_ID, abs } from '../config/site';
 import Header from '../components/Header.astro';
-import GlobalNav from '../components/GlobalNav.astro';
 import MotionHead from '../components/MotionHead.astro';
 import MotionIntro from '../components/MotionIntro.astro';
 import MotionReveal from '../components/MotionReveal.astro';
@@ -42,13 +41,13 @@ const ICON_V = '20261101';
 const ogImage = abs(SITE.ogImage);
 
 /**
- * 结构化数据：灵动云组织实体只用官网定义的 @id（这里给出最小节点），
+ * 结构化数据：灵动云组织实体使用本站自己的 @id（最小节点），
  * 本站 WebSite 由该组织发布；页面节点通过 @id 引用二者。
  */
 const graph = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'Organization', '@id': ORG_ID, name: SITE.brand, url: OFFICIAL_HOME },
+    { '@type': 'Organization', '@id': ORG_ID, name: SITE.brand, url: abs('/') },
     {
       '@type': 'WebSite',
       '@id': abs('/#website'),
@@ -102,7 +101,6 @@ const graph = {
   <body>
     <MotionIntro />
     <a class="skip-link" href="#main">跳到主要内容</a>
-    <GlobalNav />
     <Header />
     <main id="main">
       <slot />

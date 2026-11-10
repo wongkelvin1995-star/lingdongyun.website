@@ -6,9 +6,7 @@ import { join } from 'node:path';
 const DIST = new URL('../dist/', import.meta.url).pathname;
 const SITE = 'https://lingdongyun.website';
 const ACTION_URL = 'https://varnexa.lingdongaff.com/#/?code=HHoxxHGa';
-const OFFICIAL_HOME = 'https://lingdongyun.site/';
-const OFFICIAL_PAGE = 'https://lingdongyun.site/guides/lingdongyun-official/';
-const LASTMOD = '2026-11-01';
+const LASTMOD = '2026-11-02';
 const EXPECTED_PAGES = [
   '/',
   '/guides/',
@@ -19,13 +17,10 @@ const EXPECTED_PAGES = [
   '/guides/clash-party/',
   '/guides/choose-client/',
 ];
-const REDIRECTS = {
-  '/guides/plan-selection/': 'https://lingdongyun.best/guides/choose-plan',
-  '/guides/traffic-budget/': 'https://lingdongyun.best/guides/estimate-traffic',
-  '/guides/troubleshooting/': 'https://lingdongyun.sbs/guides/troubleshooting/',
-  '/guides/routes-and-protocols/': 'https://lingdongyun.sbs/guides/stable-network/',
-};
-const SISTER_HOMES = ['https://lingdongyun.site/', 'https://lingdongyun.best/', 'https://lingdongyun.sbs/', 'https://lingdongyun.lol/'];
+// 已下线页面：不再生成，也不再跳转到任何其他域名
+const REMOVED_PAGES = ['/guides/plan-selection/', '/guides/traffic-budget/', '/guides/troubleshooting/', '/guides/routes-and-protocols/'];
+// 五站完全分开：构建产物里不得出现其他四个姊妹域名（含 www）
+const SIBLING = /(?:^|[^a-z0-9-])(?:www\.)?lingdongyun\.(?:site|best|lol|sbs)(?![a-z0-9-])/i;
 
 let fails = 0;
 const ok = (cond, msg) => {
@@ -46,7 +41,7 @@ walk(DIST);
 
 // 1. 页面存在，已迁出的页面不再生成
 for (const p of EXPECTED_PAGES) ok(existsSync(fileFor(p)), `页面存在 ${p}`);
-for (const p of Object.keys(REDIRECTS)) ok(!existsSync(fileFor(p)), `已迁出页面不再生成 ${p}`);
+for (const p of REMOVED_PAGES) ok(!existsSync(fileFor(p)), `已下线页面不再生成 ${p}`);
 ok(existsSync(join(DIST, '404.html')), '404.html 存在');
 
 for (const fp of allHtml) {
@@ -67,10 +62,11 @@ for (const fp of allHtml) {
   ok((s.match(/<h1[\s>]/g) || []).length === 1, `${rel} 恰好一个 H1`);
   // 3. 角色与措辞
   ok(!/<title>[^<]*官网/.test(s) && !/<h1[^>]*>[^<]*官网/.test(s), `${rel} 标题与 H1 不含「官网」`);
-  ok(!/本站(为|是)灵动云(的)?官方网站/.test(t) && !/(官方网站|官网)[:：\s]*(https?:\/\/)?lingdongyun\.(website|best|lol|sbs)/.test(t), `${rel} 不自称官网`);
+  ok(!/本站(为|是)灵动云(的)?官方网站/.test(t), `${rel} 不自称官网`);
+  ok(!SIBLING.test(s), `${rel} 不含任何姊妹域名（链接、文字、JSON-LD 均无）`);
   ok(!/BGP/.test(t), `${rel} 不出现 BGP 线路说法`);
   ok(!/(?<![0-9.])(8|八)\s*(档|款)/.test(t), `${rel} 套餐数量统一为 9 档`);
-  ok(t.includes('本站是灵动云官方「使用指南」站点。官网：') && s.includes(`href="${OFFICIAL_HOME}"`) && s.includes(`href="${OFFICIAL_PAGE}"`), `${rel} 页脚官方站点声明与两个链接`);
+  ok(t.includes('本站是灵动云官方「使用指南」站点'), `${rel} 页脚站点声明`);
   // 4. 站内链接可解析
   const internal = [...s.matchAll(/href="(\/[^"#?]*)(\?[^"#]*)?(#[^"]*)?"/g)].map((m) => m[1]);
   const broken = internal.filter((h) => {
@@ -86,17 +82,15 @@ for (const p of EXPECTED_PAGES) {
   ok(s.includes(`<link rel="canonical" href="${SITE}${p}">`), `canonical ${p}`);
   ok(s.includes(`<meta property="og:url" content="${SITE}${p}">`), `og:url ${p}`);
   ok(s.includes('<html lang="zh-CN"'), `lang=zh-CN ${p}`);
-  ok(s.includes('"@id":"https://lingdongyun.site/#org"') && !/"@type":"Organization","@id":"(?!https:\/\/lingdongyun\.site\/#org)/.test(s), `JSON-LD 组织 @id 统一 ${p}`);
+  ok(s.includes(`"@id":"${SITE}/#org"`), `JSON-LD 组织 @id 为本站自己的节点 ${p}`);
 }
 ok(/name="robots" content="noindex/.test(readFileSync(join(DIST, '404.html'), 'utf8')), '404 noindex 且无 canonical');
 ok(existsSync(join(DIST, 'og-default.png')), 'og:image 文件存在');
 
 // 6. 首页结构
 const home = html('/');
-ok(/data-ldy-family/.test(home), '首页有「灵动云官方站点」区块（data-ldy-family）');
-ok(home.includes('当前站点'), '官方站点区块标出当前站点');
-for (const u of SISTER_HOMES) ok(home.includes(`href="${u}"`), `首页链接姊妹站首页 ${u}`);
-for (const id of ['devices', 'import', 'guides', 'faq', 'official-sites']) ok(home.includes(`id="${id}"`), `首页锚点 #${id}`);
+ok(!/data-ldy-family|ldy-gn/.test(home), '首页没有站点名录区块与跨站导航条');
+for (const id of ['devices', 'import', 'guides', 'faq']) ok(home.includes(`id="${id}"`), `首页锚点 #${id}`);
 const faqVisible = (home.match(/<li class="faq-item"/g) || []).length;
 const faqLd = (home.match(/"@type":"Question"/g) || []).length;
 ok(faqVisible > 0 && faqVisible === faqLd, `FAQPage 结构化数据与可见问答一致（${faqVisible} 题）`);
@@ -110,11 +104,18 @@ const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 ok(locs.length === EXPECTED_PAGES.length && EXPECTED_PAGES.every((p) => locs.includes(SITE + p)), `sitemap 精确列出 ${EXPECTED_PAGES.length} 个可索引页面`);
 ok([...sm.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].every((m) => m[1] === LASTMOD), `sitemap lastmod 均为 ${LASTMOD}`);
 const redirects = readFileSync(join(DIST, '_redirects'), 'utf8');
-for (const [src, dst] of Object.entries(REDIRECTS)) {
-  for (const v of [src, src.replace(/\/$/, '')]) {
-    ok(new RegExp(`^${v.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}\\s+${dst.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}\\s+301\\s*$`, 'm').test(redirects), `_redirects ${v} → ${dst} 301`);
-  }
-}
+ok(!SIBLING.test(redirects) && !/^[^#\n]*https?:\/\//m.test(redirects), '_redirects 没有任何跳转到其他域名的规则');
+
+// 8. 全站零姊妹域名：dist 下所有文本文件
+const walkAll = (d, out = []) => {
+  readdirSync(d).forEach((f) => {
+    const fp = join(d, f);
+    statSync(fp).isDirectory() ? walkAll(fp, out) : /\.(html|xml|txt|json|js|css|svg|webmanifest)$|^_redirects$|^_headers$/.test(f) && out.push(fp);
+  });
+  return out;
+};
+const leaks = walkAll(DIST).filter((fp) => SIBLING.test(readFileSync(fp, 'utf8')));
+ok(leaks.length === 0, `dist 全部文本文件零姊妹域名引用${leaks.length ? ' → ' + leaks.map((f) => f.replace(DIST, '/')).join(',') : ''}`);
 
 console.log(`\n${fails === 0 ? '全部通过' : `失败 ${fails} 项`}`);
 process.exit(fails ? 1 : 0);

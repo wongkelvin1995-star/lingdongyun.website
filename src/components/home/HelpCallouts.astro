@@ -1,9 +1,10 @@
 ---
 /**
- * 首页两个提示：连不上 → 帮助中心排查；没有订阅 → 官网套餐与套餐选择。
+ * 首页两个提示：连不上 → 教程排查 + 用户中心工单；没有订阅 → 用户中心查看套餐。
  * 以及两行「关于本站」，说明本站只负责教程。
  */
-import { SITE, OFFICIAL_HOME, LINKS } from '../../config/site';
+import { SITE, ACTION_URL } from '../../config/site';
+import ActionLink from '../ActionLink.astro';
 import { PLANS } from '../../data/plans';
 ---
 <section class="section" id="next" aria-label="连接问题与开通订阅">
@@ -17,11 +18,11 @@ import { PLANS } from '../../data/plans';
         </span>
         <h2>导入后连不上？</h2>
         <p>
-          订阅更新失败、节点全部超时、速度变慢或流量用完，帮助中心按症状整理了检查顺序。照着检查仍未解决，可以在帮助中心联系在线客服，或在用户中心提交工单。
+          订阅更新失败、节点全部超时、速度变慢或流量用完，先确认套餐有效、流量充足，再手动更新一次订阅，并把系统时间设为自动同步。照着检查仍未解决，可以在用户中心提交工单。
         </p>
         <div class="callout-actions">
-          <a class="btn btn--primary" href={LINKS.troubleshooting}>查看连接问题排查步骤</a>
-          <a class="btn btn--ghost" href={LINKS.helpCenter}>去帮助中心找在线客服</a>
+          <a class="btn btn--primary" href="/guides/">查看全部教程</a>
+          <ActionLink variant="ghost">登录用户中心提交工单</ActionLink>
         </div>
       </div>
 
@@ -33,18 +34,18 @@ import { PLANS } from '../../data/plans';
         </span>
         <h2>还没有订阅？</h2>
         <p>
-          灵动云共 {PLANS.length} 档套餐，分为月付、年付、一次性流量包和至尊私人定制。价格与套餐说明在官网；拿不准选哪档，先用套餐选择估算每月流量。
+          灵动云共 {PLANS.length} 档套餐，分为月付、年付、一次性流量包和至尊私人定制。价格与套餐说明以用户中心实时显示为准；拿不准选哪档，先按日常用途估一估每月流量。
         </p>
         <ul class="callout-links">
-          <li><a href={OFFICIAL_HOME}>在官网查看 {PLANS.length} 档套餐</a></li>
-          <li><a href={LINKS.planPicker}>用套餐选择估算每月流量</a></li>
+          <li><a href={ACTION_URL} target="_blank" rel="noopener">在用户中心查看 {PLANS.length} 档套餐</a></li>
+          <li><a href="/guides/choose-client/">先选好适合自己设备的客户端</a></li>
         </ul>
       </div>
     </div>
 
     <p class="about-site">
       <strong>关于本站</strong>
-      <span>{SITE.name}（{SITE.domain}）是灵动云官方的教程站点，只讲客户端安装、订阅导入和日常设置。套餐价格与注册请看官网，连接问题与在线客服请到帮助中心。</span>
+      <span>{SITE.name}（{SITE.domain}）是灵动云官方的教程站点，只讲客户端安装、订阅导入和日常设置。套餐价格与注册请到用户中心，连接问题可以先看教程，仍未解决再提交工单。</span>
     </p>
   </div>
 </section>

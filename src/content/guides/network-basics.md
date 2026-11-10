@@ -82,4 +82,4 @@ related: [choose-client, clash-subscription, shadowrocket]
 
 - 还没装客户端：看[按设备选客户端](/guides/choose-client/)，找到自己设备对应的客户端和订阅格式；
 - 已经装好：直接看 [Clash 订阅导入](/guides/clash-subscription/)、[小火箭教程](/guides/shadowrocket/)或 [v2rayN / v2rayNG 教程](/guides/windows-android-clients/)；
-- 第一次使用、想按顺序完成注册、选套餐、导入和连接：[灵动云新手入门](https://lingdongyun.lol/)把这四步放在了一页里。
+- 第一次使用、想按顺序完成注册、选套餐、导入和连接：先注册并开通套餐，再按[按设备选择客户端](/guides/choose-client/)挑好客户端，最后照对应教程导入订阅。

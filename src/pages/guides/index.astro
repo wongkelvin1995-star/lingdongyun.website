@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { SITE, LINKS, abs } from '../../config/site';
+import { SITE, abs } from '../../config/site';
 import { DEVICES, GENERAL_GUIDES } from '../../data/devices';
 
 const guides = (await getCollection('guides', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
@@ -104,7 +104,7 @@ const jsonLd = [
       </span>
       <p>
         <strong>照着教程导入后还是连不上？</strong>
-        订阅更新失败、节点超时或速度慢，帮助中心有<a href={LINKS.troubleshooting}>按症状整理的排查步骤</a>，照着逐项检查即可。
+        订阅更新失败、节点超时或速度慢，先看各教程里“连不上的时候”那一节逐项检查，仍未解决再到用户中心提交工单。
       </p>
     </div>
 
