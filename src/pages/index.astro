@@ -6,7 +6,6 @@ import Devices from '../components/home/Devices.astro';
 import ImportSteps from '../components/home/ImportSteps.astro';
 import Guides from '../components/home/Guides.astro';
 import HelpCallouts from '../components/home/HelpCallouts.astro';
-import FamilyBlock from '../components/FamilyBlock.astro';
 import Faq from '../components/home/Faq.astro';
 import { SITE, ORG_ID, abs } from '../config/site';
 import { FAQS, stripHtml } from '../data/faq';
@@ -44,6 +43,5 @@ const jsonLd = [
   <ImportSteps />
   <Guides />
   <HelpCallouts />
-  <FamilyBlock />
   <Faq />
 </BaseLayout>

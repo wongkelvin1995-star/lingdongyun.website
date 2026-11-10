@@ -1,11 +1,1 @@
-# 2026-11-01 v2：以下教程迁到对应的灵动云官方站点（套餐选择 / 帮助中心），永久重定向。
-# 每条同时列出带 / 与不带 / 的写法。
-
-/guides/plan-selection/          https://lingdongyun.best/guides/choose-plan        301
-/guides/plan-selection           https://lingdongyun.best/guides/choose-plan        301
-/guides/traffic-budget/          https://lingdongyun.best/guides/estimate-traffic   301
-/guides/traffic-budget           https://lingdongyun.best/guides/estimate-traffic   301
-/guides/troubleshooting/         https://lingdongyun.sbs/guides/troubleshooting/    301
-/guides/troubleshooting          https://lingdongyun.sbs/guides/troubleshooting/    301
-/guides/routes-and-protocols/    https://lingdongyun.sbs/guides/stable-network/     301
-/guides/routes-and-protocols     https://lingdongyun.sbs/guides/stable-network/     301
+# 本站为独立站点，不再跳转到其他域名。已下线的旧地址直接返回 404（不在 sitemap 中）。

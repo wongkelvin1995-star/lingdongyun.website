@@ -1,5 +1,5 @@
 ---
-import { NAV, SITE, OFFICIAL_HOME, OFFICIAL_PAGE } from '../config/site';
+import { NAV, SITE } from '../config/site';
 import Logo from './Logo.astro';
 import ActionLink from './ActionLink.astro';
 
@@ -44,7 +44,7 @@ const tutorials = [
 
   <div class="container footer-bottom">
     <p class="footer-statement">
-      本站是灵动云官方「{SITE.role}」站点。官网：<a href={OFFICIAL_HOME}>lingdongyun.site</a> · <a href={OFFICIAL_PAGE}>官方站点说明</a>
+      本站是灵动云官方「{SITE.role}」站点，只讲客户端安装、订阅导入和日常设置。
     </p>
     <p>价格与套餐规则以用户中心实时显示为准。请在所在地法律法规允许的范围内使用网络服务。</p>
     <p class="footer-copy">© {year} {SITE.name} · <span class="mono">{SITE.domain}</span></p>

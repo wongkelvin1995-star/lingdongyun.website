@@ -5,7 +5,7 @@
  * answer 为受信任的站内 HTML 片段（可含链接），支持 {{plancount}} 等套餐占位符；
  * 「{{action}}」会被替换为用户中心（注册 / 登录）链接。
  */
-import { ACTION_URL, LINKS } from '../config/site';
+import { ACTION_URL } from '../config/site';
 import { fillPlanTokens } from './plans';
 
 export interface FaqItem {
@@ -17,7 +17,7 @@ const RAW: FaqItem[] = [
   {
     q: '订阅链接从哪里获取？可以发给别人吗？',
     a: [
-      `开通套餐后，在<a href="${LINKS.helpCenter}">帮助中心</a>联系在线客服，或在用户中心提交工单，说明你的设备和客户端，客服会发来对应的订阅链接：Clash Party、Clash Verge Rev、Clash Meta for Android 等 Clash 系客户端用 Clash 订阅链接，v2rayN、v2rayNG 用通用订阅链接，小火箭用小火箭订阅链接。`,
+      `开通套餐后，在用户中心提交工单，说明你的设备和客户端，客服会发来对应的订阅链接：Clash Party、Clash Verge Rev、Clash Meta for Android 等 Clash 系客户端用 Clash 订阅链接，v2rayN、v2rayNG 用通用订阅链接，小火箭用小火箭订阅链接。`,
       '订阅链接里带有与账号绑定的令牌，作用相当于账号凭证，不要发到群里，截图求助时也要打码。万一泄露，可以重置订阅链接，旧链接随之失效；之后向客服领取新链接，每台设备都要换上。',
     ],
   },
@@ -58,7 +58,7 @@ const RAW: FaqItem[] = [
   {
     q: '导入成功了，但节点全部超时或网页打不开怎么办？',
     a: [
-      `先做三件事：在用户中心确认套餐有效、流量没有用完；手动更新一次订阅；把系统时间设为自动同步。仍然不行，按帮助中心的<a href="${LINKS.troubleshooting}#timeout">排查步骤</a>逐项检查，也可以在<a href="${LINKS.helpCenter}">帮助中心</a>联系在线客服，或在用户中心提交工单。`,
+      `先做三件事：在用户中心确认套餐有效、流量没有用完；手动更新一次订阅；把系统时间设为自动同步。仍然不行，把这三步再逐项检查一遍，也可以在用户中心提交工单。`,
     ],
   },
 ];
